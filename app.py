@@ -1,4 +1,5 @@
 from src.camera.camera import CameraManager
+from src.detection.face_detector import FaceDetector
 import cv2
 import time
 
@@ -10,12 +11,16 @@ def main():
     camera = CameraManager()
 
     camera.open_camera()
+    detector = FaceDetector()
     
     previous_time = time.time()
 
     while True:
 
         ret, frame = camera.read_frame()
+        results = detector.detect_faces(frame)
+        frame = detector.draw_landmarks(frame, results)
+       
         current_time = time.time()
         fps = 1 / (current_time - previous_time)
         previous_time = current_time
