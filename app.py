@@ -1,5 +1,8 @@
+import cv2
+import time
 from src.camera.camera import CameraManager
 from src.detection.face_detector import FaceDetector
+from src.blink.blink_detector import BlinkDetector
 from src.utils.eye_utils import (
     LEFT_EYE,
     RIGHT_EYE,
@@ -8,8 +11,6 @@ from src.utils.eye_utils import (
     draw_eye_points,
     calculate_ear,
 )
-import cv2
-import time
 
 def main():
     """
@@ -20,7 +21,7 @@ def main():
 
     camera.open_camera()
     detector = FaceDetector()
-    
+    blink_detector = BlinkDetector()
     previous_time = time.time()
 
     while True:
@@ -42,6 +43,7 @@ def main():
           right_ear = calculate_ear(right_eye_pixels)
 
           ear = (left_ear + right_ear) / 2
+          blink_detector.update(ear)
 
           frame = draw_eye_points(frame, left_eye_pixels)
           frame = draw_eye_points(frame, right_eye_pixels)
@@ -70,6 +72,15 @@ def main():
             cv2.FONT_HERSHEY_SIMPLEX,
             1,
             (255, 255, 0),
+            2,
+)
+        cv2.putText(
+            frame,
+            f"Blinks: {blink_detector.total_blinks}",
+            (20, 120),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            1,
+            (0, 0, 255),
             2,
 )
         cv2.imshow("DriveSense AI", frame)
