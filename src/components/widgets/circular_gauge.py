@@ -9,7 +9,7 @@ class CircularGauge(ctk.CTkCanvas):
             parent,
             width=size,
             height=size,
-            bg="#111827",
+            bg="#061123",
             highlightthickness=0
         )
 

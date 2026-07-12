@@ -15,7 +15,7 @@ class AttentionGraph(ctk.CTkFrame):
         )
 
         self.figure = Figure(
-            figsize=(6, 2.2),   # only the initial size
+            figsize=(4, 2.5),   # only the initial size
             dpi=100
         )
 
@@ -34,7 +34,7 @@ class AttentionGraph(ctk.CTkFrame):
 
         self.x = list(range(10))
 
-        self.y = [74,73,76,78,81,83,82,84,85,86]
+        self.y = [50,25,76,78,80,83,60,84,85,86]
 
         self.line, = self.ax.plot(
             self.x,
@@ -48,6 +48,8 @@ class AttentionGraph(ctk.CTkFrame):
             self.figure,
             self
         )
+
+        self.figure.tight_layout()
 
         self.canvas.draw()
 
