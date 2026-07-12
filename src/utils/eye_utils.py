@@ -97,3 +97,37 @@ def calculate_ear(eye_points):
     ear = (vertical1 + vertical2) / (2.0 * horizontal)
 
     return ear
+MOUTH = [
+    61,
+    291,
+    13,
+    14,
+    78,
+    308,
+    81,
+    311,
+]
+def get_mouth_landmarks(face_landmarks):
+    return get_eye_landmarks(face_landmarks, MOUTH)
+def calculate_mar(mouth_points):
+
+    if len(mouth_points) < 8:
+        return 0.0
+
+    left = mouth_points[0]
+    right = mouth_points[1]
+
+    top1 = mouth_points[2]
+    bottom1 = mouth_points[3]
+
+    top2 = mouth_points[6]
+    bottom2 = mouth_points[7]
+
+    horizontal = distance.euclidean(left, right)
+
+    vertical1 = distance.euclidean(top1, bottom1)
+    vertical2 = distance.euclidean(top2, bottom2)
+
+    mar = (vertical1 + vertical2) / (2.0 * horizontal)
+
+    return mar
