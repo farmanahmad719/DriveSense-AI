@@ -5,6 +5,8 @@ from src.components.sidebar import Sidebar
 from src.components.navbar import Navbar
 from src.components.rows.top_row import TopRow
 from src.components.rows.middle_row import MiddleRow
+from src.components.rows.graph_row import GraphRow
+from src.components.rows.bottom_row import BottomRow
 
 
 class Dashboard(ctk.CTk):
@@ -55,7 +57,8 @@ class Dashboard(ctk.CTk):
         self.main.grid_rowconfigure(1, weight=0)   # Top Row
         self.main.grid_rowconfigure(2, weight=0)   # Middle Row
         self.main.grid_rowconfigure(3, weight=1)   # Remaining space
-
+        self.main.grid_rowconfigure(4, weight=0)
+        
         self.main.grid_columnconfigure(0, weight=1)
 
         self.navbar = Navbar(self.main)
@@ -86,4 +89,24 @@ class Dashboard(ctk.CTk):
              sticky="ew",
              padx=20,
              pady=(0,10)
-)
+        )
+
+        self.graph = GraphRow(self.main)
+
+        self.graph.grid(
+            row=3,
+            column=0,
+            sticky="nsew",
+            padx=20,
+            pady=10
+        )
+
+        self.bottom = BottomRow(self.main)
+
+        self.bottom.grid(
+            row=4,
+            column=0,
+            sticky="ew",
+            padx=20,
+            pady=10
+        )

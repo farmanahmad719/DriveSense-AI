@@ -14,7 +14,7 @@ class CameraCard(ctk.CTkFrame):
 
             corner_radius=20,
 
-            height=260
+            height=390
 
         )
 

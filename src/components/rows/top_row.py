@@ -2,7 +2,7 @@ import customtkinter as ctk
 from theme import *
 
 from src.components.cards.camera_card import CameraCard
-from src.components.cards.metric_card import MetricCard
+from src.components.cards.gauge_card import GaugeCard
 
 
 class TopRow(ctk.CTkFrame):
@@ -28,10 +28,30 @@ class TopRow(ctk.CTkFrame):
 
         camera.grid(row=0,column=0,sticky="nsew",padx=8)
 
-        MetricCard(self,"Attention","73%","#00E676").grid(row=0,column=1,sticky="nsew",padx=8)
+        GaugeCard(
+            self,
+            "Attention",
+            73,
+            "#00E676"
+            ).grid(row=0,column=1,sticky="nsew",padx=8)
 
-        MetricCard(self,"Drowsiness","62%","#FFA726").grid(row=0,column=2,sticky="nsew",padx=8)
+        GaugeCard(
+            self,
+            "Drowsiness",
+            61,
+            "#FFA726"
+            ).grid(row=0,column=2,sticky="nsew",padx=8)
 
-        MetricCard(self,"Blink","18","#29B6F6").grid(row=0,column=3,sticky="nsew",padx=8)
+        GaugeCard(
+            self,
+            "Blink",
+            42,
+            "#29B6F6"
+            ).grid(row=0,column=3,sticky="nsew",padx=8)
 
-        MetricCard(self,"EAR","0.24","#AB47BC").grid(row=0,column=4,sticky="nsew",padx=8)
+        GaugeCard(
+            self,
+            "EAR",
+            84,
+            "#AB47BC"
+            ).grid(row=0,column=4,sticky="nsew",padx=8)
