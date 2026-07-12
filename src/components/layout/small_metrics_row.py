@@ -7,7 +7,8 @@ class SmallMetricsRow(ctk.CTkFrame):
 
         super().__init__(
             parent,
-            fg_color="transparent"
+            fg_color="transparent",
+            height=80
         )
 
 

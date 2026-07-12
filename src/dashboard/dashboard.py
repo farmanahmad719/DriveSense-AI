@@ -52,8 +52,8 @@ class Dashboard(ctk.CTk):
         )
 
         self.main.grid_rowconfigure(0, weight=0)   # Navbar
-        self.main.grid_rowconfigure(1, weight=3)
-        self.main.grid_rowconfigure(2, weight=1)
+        self.main.grid_rowconfigure(1, weight=1)   # Content expands
+        self.main.grid_rowconfigure(2, weight=0)   # Bottom stays natural size
         
         self.main.grid_columnconfigure(0, weight=1)
 
@@ -72,7 +72,7 @@ class Dashboard(ctk.CTk):
         self.content.grid(
             row=1,
             column=0,
-            sticky="nsew",
+            sticky="ew",
             padx=20,
             pady=10
         )

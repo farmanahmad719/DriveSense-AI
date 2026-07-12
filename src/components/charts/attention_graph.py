@@ -15,6 +15,7 @@ class AttentionGraph(ctk.CTkFrame):
         )
 
         self.figure = Figure(
+            figsize=(6, 2.2),   # only the initial size
             dpi=100
         )
 

@@ -10,15 +10,15 @@ class AlertCard(ctk.CTkFrame):
             parent,
             fg_color=CARD,
             corner_radius=18,
-            height=180
+            height=10
         )
 
-        self.grid_propagate(False)
+        self.pack_propagate(False)
 
         title = ctk.CTkLabel(
             self,
             text="🚨 Alerts",
-            font=("Segoe UI",18,"bold")
+            font=("Segoe UI",14,"bold")
         )
 
         title.pack(anchor="w",padx=15,pady=(15,10))

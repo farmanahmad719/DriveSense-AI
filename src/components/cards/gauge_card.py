@@ -13,7 +13,7 @@ class GaugeCard(ctk.CTkFrame):
             fg_color=CARD,
             corner_radius=20,
             width=190,
-            height=260
+            height=220
         )
 
         self.grid_propagate(False)

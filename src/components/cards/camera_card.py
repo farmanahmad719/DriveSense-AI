@@ -11,7 +11,7 @@ class CameraCard(ctk.CTkFrame):
             fg_color=CARD,
             corner_radius=20,
             width=400,
-            height=480
+            height=350
         )
 
         #self.grid_propagate(False)

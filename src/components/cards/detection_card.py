@@ -13,13 +13,13 @@ class DetectionCard(ctk.CTkFrame):
             height=180
         )
 
-        self.grid_propagate(False)
+        self.pack_propagate(False)
 
         ctk.CTkLabel(
             self,
             text="🤖 AI Detection",
-            font=("Segoe UI",18,"bold")
-        ).pack(pady=15)
+            font=("Segoe UI",14,"bold")
+        ).pack(pady=7)
 
         items = [
             "✅ Face",
