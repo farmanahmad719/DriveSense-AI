@@ -11,6 +11,7 @@ from src.alerts.alarm import AlarmManager
 from src.yawn.yawn_detector import YawnDetector
 from src.scoring.fatigue_score import FatigueScore
 from src.head_pose.head_pose_estimator import HeadPoseEstimator
+from src.distraction.distraction_detector import DistractionDetector
 from src.utils.eye_utils import (
     LEFT_EYE,
     RIGHT_EYE,
@@ -33,6 +34,7 @@ def main():
     yawn_detector = YawnDetector()
     fatigue_score = FatigueScore()
     head_pose_estimator = HeadPoseEstimator()
+    distraction_detector = DistractionDetector()
     camera.open_camera()
 
     previous_time = time.time()
@@ -88,6 +90,7 @@ def main():
 
             elif pitch > 15:
                 direction = "DOWN"
+            is_distracted = distraction_detector.update(direction)    
 
             blink_detector.update(ear)
 
@@ -99,7 +102,7 @@ def main():
                 yawn_detector.total_yawns
         )       
 
-            if is_drowsy:
+            if is_drowsy or is_distracted:
                 alarm.play_alarm()
             else:
                 alarm.stop_alarm()
@@ -229,6 +232,52 @@ def main():
             (0, 255, 255),
             2,
         )
+        cv2.putText(
+            frame,
+            f"Distracted: {'YES' if is_distracted else 'NO'}",
+            (20, 480),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            0.8,
+            (0, 0, 255) if is_distracted else (0, 255, 0),
+            2,
+        )
+        if is_drowsy:
+            cv2.rectangle(
+                frame,
+                (0, 0),
+                (frame.shape[1], 60),
+                (0, 0, 255),
+                -1,
+            )
+
+            cv2.putText(
+                frame,
+                "WARNING: DRIVER DROWSY",
+                (50, 40),
+                cv2.FONT_HERSHEY_SIMPLEX,
+                1,
+                (255, 255, 255),
+                3,
+            )
+
+        elif is_distracted:
+            cv2.rectangle(
+                frame,
+                (0, 0),
+                (frame.shape[1], 60),
+                (0, 0, 255),
+                -1,
+            )
+
+            cv2.putText(
+                frame,
+                "WARNING: DRIVER DISTRACTED",
+                (20, 40),
+                cv2.FONT_HERSHEY_SIMPLEX,
+                1,
+                (255, 255, 255),
+                3,
+            )
 
         cv2.imshow("DriveSense AI", frame)
 
