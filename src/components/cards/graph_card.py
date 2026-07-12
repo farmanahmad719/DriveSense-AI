@@ -11,7 +11,7 @@ class GraphCard(ctk.CTkFrame):
         super().__init__(
             parent,
             fg_color=CARD,
-            corner_radius=20
+            corner_radius=20,
         )
 
         title = ctk.CTkLabel(
@@ -32,5 +32,5 @@ class GraphCard(ctk.CTkFrame):
             fill="both",
             expand=True,
             padx=15,
-            pady=(0,15)
+            pady=(5,15)
         )

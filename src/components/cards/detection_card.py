@@ -10,7 +10,7 @@ class DetectionCard(ctk.CTkFrame):
             parent,
             fg_color=CARD,
             corner_radius=18,
-            height=220
+            height=180
         )
 
         self.grid_propagate(False)
