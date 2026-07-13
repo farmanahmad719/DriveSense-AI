@@ -3,6 +3,7 @@ import time
 
 from matplotlib.pylab import roll
 
+from src.logger.session_logger import SessionLogger
 from src.camera.camera import CameraManager
 from src.detection.face_detector import FaceDetector
 from src.blink.blink_detector import BlinkDetector
@@ -12,6 +13,7 @@ from src.yawn.yawn_detector import YawnDetector
 from src.scoring.fatigue_score import FatigueScore
 from src.head_pose.head_pose_estimator import HeadPoseEstimator
 from src.distraction.distraction_detector import DistractionDetector
+from src.logger.session_logger import SessionLogger
 from src.utils.eye_utils import (
     LEFT_EYE,
     RIGHT_EYE,
@@ -35,6 +37,9 @@ def main():
     fatigue_score = FatigueScore()
     head_pose_estimator = HeadPoseEstimator()
     distraction_detector = DistractionDetector()
+    logger = SessionLogger()
+    previous_drowsy = False
+    previous_distracted = False
     camera.open_camera()
 
     previous_time = time.time()
@@ -90,11 +95,29 @@ def main():
 
             elif pitch > 15:
                 direction = "DOWN"
-            is_distracted = distraction_detector.update(direction)    
+            is_distracted = distraction_detector.update(direction)   
+            if is_distracted and not previous_distracted:
+                    logger.log(
+                        "DISTRACTION",
+                        f"Driver looking {direction}"
+                    )
+
+            if not is_distracted and previous_distracted:
+                    logger.log(
+                        "FOCUSED",
+                        "Driver looking forward again"
+                    )
+
+            previous_distracted = is_distracted
 
             blink_detector.update(ear)
 
             is_drowsy = drowsiness_detector.update(ear)
+            if is_drowsy and not previous_drowsy:
+                logger.log("DROWSINESS", "Driver became drowsy")
+            if not is_drowsy and previous_drowsy:
+                logger.log("ALERT", "Driver became alert again")
+            previous_drowsy = is_drowsy
 
             is_yawning = yawn_detector.update(mar)
             score = fatigue_score.update(
@@ -285,6 +308,10 @@ def main():
             break
 
     alarm.stop_alarm()
+    print("\n========== SESSION LOG ==========\n")
+
+    for log in logger.get_logs():
+        print(log)
     camera.release_camera()
     cv2.destroyAllWindows()
 
