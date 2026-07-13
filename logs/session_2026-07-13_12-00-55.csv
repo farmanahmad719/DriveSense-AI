@@ -1,0 +1,19 @@
+Time,Event,Details
+11:59:54,DROWSINESS,Driver became drowsy
+11:59:55,ALERT,Driver became alert again
+11:59:56,DROWSINESS,Driver became drowsy
+11:59:58,ALERT,Driver became alert again
+11:59:59,DISTRACTION,Driver looking DOWN
+12:00:00,FOCUSED,Driver looking forward again
+12:00:19,DISTRACTION,Driver looking LEFT
+12:00:21,FOCUSED,Driver looking forward again
+12:00:24,DISTRACTION,Driver looking UP
+12:00:26,FOCUSED,Driver looking forward again
+12:00:30,DISTRACTION,Driver looking RIGHT
+12:00:32,FOCUSED,Driver looking forward again
+12:00:37,DISTRACTION,Driver looking LEFT
+12:00:39,DROWSINESS,Driver became drowsy
+12:00:39,ALERT,Driver became alert again
+12:00:43,DROWSINESS,Driver became drowsy
+12:00:43,FOCUSED,Driver looking forward again
+12:00:44,ALERT,Driver became alert again

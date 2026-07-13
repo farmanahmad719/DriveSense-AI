@@ -1,37 +1,21 @@
 import cv2
+import config
 
 
 class CameraManager:
 
-    def __init__(self, source=0):
-        self.source = source
-        self.camera = None
-
-        print("CameraManager initialized.")
+    def __init__(self):
+        self.cap = None
 
     def open_camera(self):
+        self.cap = cv2.VideoCapture(config.CAMERA_INDEX)
 
-        self.camera = cv2.VideoCapture(self.source)
-
-        if not self.camera.isOpened():
-            raise Exception("Unable to open webcam.")
-
-        print("Webcam opened.")
+        if not self.cap.isOpened():
+            raise RuntimeError("Could not open camera.")
 
     def read_frame(self):
-
-        if self.camera is None:
-            raise Exception("Camera is not opened.")
-
-        ret, frame = self.camera.read()
-
-        return ret, frame
+        return self.cap.read()
 
     def release_camera(self):
-
-        if self.camera is not None:
-            self.camera.release()
-
-        cv2.destroyAllWindows()
-
-        print("Camera released.")
+        if self.cap is not None:
+            self.cap.release()
