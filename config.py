@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # COLOR SCHEME
 
 COLORS = {
@@ -123,7 +122,6 @@ DB_TABLES = {
     """
 }
 
-=======
 CAMERA_INDEX = 0
 
 EAR_THRESHOLD = 0.25
@@ -143,4 +141,3 @@ WINDOW_NAME = "DriveSense AI"
 SHOW_FPS = True
 
 SHOW_LANDMARKS = True
->>>>>>> ebe7f4e4d6bfe5b6623e3a88e8a982dab36800b7
