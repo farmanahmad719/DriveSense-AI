@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # COLOR SCHEME
 
 COLORS = {
@@ -28,7 +29,7 @@ WINDOW_WIDTH = 1500
 WINDOW_HEIGHT = 900
 MIN_WIDTH = 1300
 MIN_HEIGHT = 800
-WINDOW_TITLE = "DriveSense AI - Driver Monitoring System"
+
 
 # ============================================
 # GAUGE SETTINGS
@@ -38,11 +39,7 @@ GAUGE_RADIUS = 75
 GAUGE_MIN = 0
 GAUGE_MAX = 100
 
-# ============================================
-# DETECTION THRESHOLDS
-# ============================================
-EAR_THRESHOLD = 0.25        # Eye Aspect Ratio - below this = eyes closed
-MAR_THRESHOLD = 0.6         # Mouth Aspect Ratio - above this = yawning
+
 HEAD_POSE_THRESHOLD = 30    # Degrees - above this = looking away
 PHONE_CONFIDENCE = 0.5      # YOLO confidence threshold for phone detection
 
@@ -80,7 +77,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Model paths
 YOLO_MODEL_PATH = os.path.join(BASE_DIR, "assets", "models", "yolov8n.pt")
-SIREN_PATH = os.path.join(BASE_DIR, "assets", "sounds", "alarm.wav")
+
 
 # Database & Logs
 DB_PATH = os.path.join(BASE_DIR, "data", "driver_history.db")
@@ -89,10 +86,9 @@ LOG_PATH = os.path.join(BASE_DIR, "logs", "events.log")
 # ============================================
 # CAMERA SETTINGS
 # ============================================
-CAMERA_ID = 0               # Default webcam
+
 CAMERA_WIDTH = 640
 CAMERA_HEIGHT = 480
-CAMERA_FPS = 30
 
 # ============================================
 # ALERT SETTINGS
@@ -127,3 +123,24 @@ DB_TABLES = {
     """
 }
 
+=======
+CAMERA_INDEX = 0
+
+EAR_THRESHOLD = 0.25
+
+DROWSINESS_FRAMES = 20
+
+MAR_THRESHOLD = 0.70
+
+DISTRACTION_LEFT_RIGHT_TIME = 3.0
+
+DISTRACTION_UP_DOWN_TIME = 1.5
+
+ALARM_FILE = "assets/alarm.wav"
+
+WINDOW_NAME = "DriveSense AI"
+
+SHOW_FPS = True
+
+SHOW_LANDMARKS = True
+>>>>>>> ebe7f4e4d6bfe5b6623e3a88e8a982dab36800b7

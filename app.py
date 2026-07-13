@@ -1,8 +1,7 @@
 import cv2
 import time
 
-from matplotlib.pylab import roll
-
+from src.logger.session_logger import SessionLogger
 from src.camera.camera import CameraManager
 from src.detection.face_detector import FaceDetector
 from src.blink.blink_detector import BlinkDetector
@@ -12,6 +11,8 @@ from src.yawn.yawn_detector import YawnDetector
 from src.scoring.fatigue_score import FatigueScore
 from src.head_pose.head_pose_estimator import HeadPoseEstimator
 from src.distraction.distraction_detector import DistractionDetector
+from src.reports.report_generator import ReportGenerator
+from src.logger.session_logger import SessionLogger
 from src.utils.eye_utils import (
     LEFT_EYE,
     RIGHT_EYE,
@@ -35,9 +36,22 @@ def main():
     fatigue_score = FatigueScore()
     head_pose_estimator = HeadPoseEstimator()
     distraction_detector = DistractionDetector()
+    logger = SessionLogger()
+    report_generator = ReportGenerator()
+    previous_drowsy = False
+    previous_distracted = False
     camera.open_camera()
 
     previous_time = time.time()
+    drowsiness_events = 0
+    distraction_events = 0
+
+    ear_sum = 0.0
+    mar_sum = 0.0
+
+    frame_count = 0
+
+    max_fatigue_score = 0
 
     ear = 0
     is_drowsy = False
@@ -71,6 +85,9 @@ def main():
             mar = calculate_mar(mouth_pixels)
 
             ear = (left_ear + right_ear) / 2
+            ear_sum += ear
+            mar_sum += mar
+            frame_count += 1
             pose = head_pose_estimator.estimate_pose(frame, face_landmarks)
 
             if pose is not None:
@@ -90,18 +107,42 @@ def main():
 
             elif pitch > 15:
                 direction = "DOWN"
-            is_distracted = distraction_detector.update(direction)    
+            is_distracted = distraction_detector.update(direction)   
+            if is_distracted and not previous_distracted:
+                distraction_events += 1
+                logger.log(
+                    "DISTRACTION",
+                    f"Driver looking {direction}"
+                )
+
+            if not is_distracted and previous_distracted:
+                logger.log(
+                    "FOCUSED",
+                    "Driver looking forward again"
+                )
+
+            previous_distracted = is_distracted
+
+            previous_distracted = is_distracted
 
             blink_detector.update(ear)
 
             is_drowsy = drowsiness_detector.update(ear)
+            if is_drowsy and not previous_drowsy:
+                drowsiness_events += 1
+                logger.log("DROWSINESS", "Driver became drowsy")
+
+            if not is_drowsy and previous_drowsy:
+                logger.log("ALERT", "Driver became alert again")
+
+            previous_drowsy = is_drowsy
 
             is_yawning = yawn_detector.update(mar)
             score = fatigue_score.update(
                 is_drowsy,
                 yawn_detector.total_yawns
         )       
-
+            max_fatigue_score = max(max_fatigue_score, score)
             if is_drowsy or is_distracted:
                 alarm.play_alarm()
             else:
@@ -285,10 +326,32 @@ def main():
             break
 
     alarm.stop_alarm()
+
+    print("\n========== SESSION LOG ==========\n")
+
+    for log in logger.get_logs():
+        print(log)
+
+    logger.save_to_csv()
+    average_ear = 0.0
+    average_mar = 0.0
+
+    if frame_count > 0:
+        average_ear = ear_sum / frame_count
+        average_mar = mar_sum / frame_count
+
+    report_generator.generate_report(
+        total_blinks=blink_detector.total_blinks,
+        total_yawns=yawn_detector.total_yawns,
+        fatigue_score=max_fatigue_score,
+        drowsiness_events=drowsiness_events,
+        distraction_events=distraction_events,
+        average_ear=average_ear,
+        average_mar=average_mar,
+    )    
+
     camera.release_camera()
     cv2.destroyAllWindows()
 
-
 if __name__ == "__main__":
     main()
-    

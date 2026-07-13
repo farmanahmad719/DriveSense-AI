@@ -1,32 +1,25 @@
+import config
+
+
 class DrowsinessDetector:
 
-    def __init__(
-        self,
-        ear_threshold=0.20,
-        drowsy_frames=45,
-    ):
+    def __init__(self):
 
-        self.ear_threshold = ear_threshold
-        self.drowsy_frames = drowsy_frames
+        self.ear_threshold = config.EAR_THRESHOLD
+        self.consecutive_frames = config.DROWSINESS_FRAMES
 
         self.closed_eye_frames = 0
         self.is_drowsy = False
 
-        print("DrowsinessDetector initialized.")
-
     def update(self, ear):
 
         if ear < self.ear_threshold:
-
             self.closed_eye_frames += 1
-
-            if self.closed_eye_frames >= self.drowsy_frames:
-
-                self.is_drowsy = True
-
         else:
-
             self.closed_eye_frames = 0
             self.is_drowsy = False
+
+        if self.closed_eye_frames >= self.consecutive_frames:
+            self.is_drowsy = True
 
         return self.is_drowsy
