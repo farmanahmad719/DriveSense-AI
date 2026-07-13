@@ -308,14 +308,16 @@ def main():
             break
 
     alarm.stop_alarm()
+
     print("\n========== SESSION LOG ==========\n")
 
     for log in logger.get_logs():
         print(log)
+
+    logger.save_to_csv()
+
     camera.release_camera()
     cv2.destroyAllWindows()
 
-
 if __name__ == "__main__":
     main()
-    
