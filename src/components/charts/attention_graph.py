@@ -1,4 +1,5 @@
 import customtkinter as ctk
+from theme import *
 
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
@@ -32,14 +33,25 @@ class AttentionGraph(ctk.CTkFrame):
         self.ax.spines["top"].set_visible(False)
         self.ax.spines["right"].set_visible(False)
 
-        self.x = list(range(10))
+        self.x = list(range(0, 20, 2))
 
-        self.y = [50,25,76,78,80,83,60,84,85,86]
+        self.datasets = {
+            "Attention": [74, 73, 76, 78, 81, 83, 82, 84, 85, 86],
+
+             "Blink Rate": [18, 17, 16, 18, 20, 19, 21, 18, 17, 16],
+
+              "Drowsiness": [12, 13, 14, 18, 22, 20, 16, 15, 11, 9],
+
+             "EAR": [0.31, 0.30, 0.32, 0.29, 0.28, 0.30, 0.31, 0.32, 0.31, 0.30]
+
+        }
+
+        self.current_metric = "Attention"
 
         self.line, = self.ax.plot(
             self.x,
-            self.y,
-            linewidth=3
+            self.datasets[self.current_metric],
+            linewidth=2
         )
 
         self.ax.set_ylim(0,100)
@@ -49,9 +61,9 @@ class AttentionGraph(ctk.CTkFrame):
             self
         )
 
-        self.figure.tight_layout()
-
-        self.canvas.draw()
+        self.figure.tight_layout(rect=[0, 0.15, 1, 0.92])
+        
+        #self.canvas.draw()
 
         self.canvas.get_tk_widget().pack(
             fill="both",
@@ -59,5 +71,47 @@ class AttentionGraph(ctk.CTkFrame):
             padx=10,
             pady=10
         )
+
+        self.show_metric("Attention")
+
+    def show_metric(self, metric):
+
+        self.current_metric = metric
+
+        colors = {
+            "Attention": ACCENT,
+            "Blink Rate": BLUE,
+            "Drowsiness": ORANGE,
+            "EAR": PURPLE
+        }        
+
+        self.line.set_ydata(self.datasets[metric])
+        self.line.set_color(colors[metric])
+
+        if metric == "EAR":
+            self.ax.set_ylim(0.15, 0.40)
+            self.ax.set_ylabel("EAR")
+
+        elif metric=="Attention":
+            self.ax.set_ylim(0,100)
+            self.ax.set_ylabel("Attention(%)")
+
+        elif metric == "Blink Rate":
+             self.ax.set_ylim(0, 30)
+             self.ax.set_ylabel("Blinks/min")
+
+        else:
+            self.ax.set_ylim(0, 100)
+            self.ax.set_ylabel(metric)
+
+        self.ax.set_title(f"{metric} Trend")
+        self.ax.set_xlabel("Time (sec)")
+
+        self.ax.title.set_color("white")
+        self.ax.yaxis.label.set_color("white")
+        self.ax.xaxis.label.set_color("white")
+
+        
+        self.canvas.draw_idle()
 
         

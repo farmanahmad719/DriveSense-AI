@@ -34,4 +34,4 @@ class DetectionCard(ctk.CTkFrame):
                 self,
                 text=item,
                 anchor="w"
-            ).pack(anchor="w",padx=20,pady=5)
+            ).pack(anchor="w",padx=18,pady=3)

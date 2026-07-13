@@ -48,11 +48,11 @@ class SmallMetricsRow(ctk.CTkFrame):
                 card,
                 text=title,
                 font=("Segoe UI",14,"bold")
-            ).pack(pady=(12,5))
+            ).pack(pady=(9,1))
 
 
             ctk.CTkLabel(
                 card,
                 text=value,
                 font=("Segoe UI",20)
-            ).pack(pady=5)
+            ).pack(pady=(0,9))

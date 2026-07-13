@@ -4,13 +4,15 @@ from theme import *
 
 class ActionPanel(ctk.CTkFrame):
 
-    def __init__(self, parent):
+    def __init__(self, parent, graph_callback):
 
         super().__init__(
             parent,
             fg_color="transparent",
             width=220
         )
+
+        self.graph_callback = graph_callback
 
         self.grid_propagate(False)
 
@@ -56,7 +58,8 @@ class ActionPanel(ctk.CTkFrame):
                 corner_radius=15,
                 fg_color=color,
                 hover_color=TEXT_SECONDARY,
-                font=("Segoe UI", 14, "bold")
+                font=("Segoe UI",14,"bold"),
+                command=lambda m=metric: self.select_metric(m)
             )
 
             btn.grid(
@@ -68,3 +71,14 @@ class ActionPanel(ctk.CTkFrame):
             )
 
             self.metric_buttons[metric] = btn
+
+    def select_metric(self, metric):
+        self.selected = metric
+
+        for name, button in self.metric_buttons.items():
+            if name == metric:
+                button.configure(fg_color=ORANGE)
+            else:
+                button.configure(fg_color=BORDER)
+
+        self.graph_callback(metric)

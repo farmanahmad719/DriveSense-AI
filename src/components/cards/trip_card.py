@@ -35,7 +35,7 @@ class TripCard(ctk.CTkFrame):
                 fg_color="transparent"
             )
 
-            row.pack(fill="x",padx=15,pady=4)
+            row.pack(fill="x",padx=13,pady=3)
 
             ctk.CTkLabel(
                 row,

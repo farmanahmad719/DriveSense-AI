@@ -19,7 +19,7 @@ class DriverCard(ctk.CTkFrame):
             self,
             text="👤 Driver",
             font=("Segoe UI",14,"bold")
-        ).pack(pady=(15,20))
+        ).pack(pady=(15,30))
 
         ctk.CTkLabel(
             self,

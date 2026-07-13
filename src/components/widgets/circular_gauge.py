@@ -3,7 +3,7 @@ import customtkinter as ctk
 
 class CircularGauge(ctk.CTkCanvas):
 
-    def __init__(self, parent, size=150, color="#00E676"):
+    def __init__(self, parent, size=170, color="#00E676"):
 
         super().__init__(
             parent,
@@ -41,7 +41,7 @@ class CircularGauge(ctk.CTkCanvas):
             extent=-360,
             style="arc",
             outline="#2C3647",
-            width=12
+            width=15
         )
 
         # Progress ring
@@ -80,10 +80,10 @@ class CircularGauge(ctk.CTkCanvas):
 
         self.create_text(
             self.center,
-            self.center+20,
+            self.center+18,
             text=status,
             fill="#9CA3AF",
-            font=("Segoe UI", 12)
+            font=("Segoe UI", 11)
         )
 
     def set_value(self, target):

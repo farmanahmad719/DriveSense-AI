@@ -21,9 +21,9 @@ class GraphCard(ctk.CTkFrame):
         self.grid_rowconfigure(0, weight=1)
 
 
-        graph = AttentionGraph(self)
+        self.graph = AttentionGraph(self)
 
-        graph.grid(
+        self.graph.grid(
             row=0,
             column=0,
             sticky="nsew",
@@ -31,7 +31,10 @@ class GraphCard(ctk.CTkFrame):
             pady=15
         )
 
-        panel = ActionPanel(self)
+        panel = ActionPanel(
+            self,
+            self.graph.show_metric
+        )
 
         panel.grid(
             row=0,
