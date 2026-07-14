@@ -16,7 +16,7 @@ class CameraPanel(ctk.CTkFrame):
         self.grid_columnconfigure(0, weight=1)
 
 
-        self.camera = CameraCard(self)
+        self.camera = CameraCard(parent)
 
         self.camera.grid(
             row=0,

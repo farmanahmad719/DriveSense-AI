@@ -3,8 +3,7 @@ import customtkinter as ctk
 from theme import *
 
 from src.components.cards.camera_card import CameraCard
-from src.components.cards.driver_card import DriverCard
-
+from src.components.cards.driver_status_card import DriverStatusCard
 
 class LiveMonitoringPage(ctk.CTkFrame):
 
@@ -16,20 +15,21 @@ class LiveMonitoringPage(ctk.CTkFrame):
         )
 
         # Layout
-        self.grid_columnconfigure(0, weight=4)
+        self.grid_columnconfigure(0, weight=5)
         self.grid_columnconfigure(1, weight=1)
 
         self.grid_rowconfigure(0, weight=1)
 
         # ================= CAMERA =================
 
-        self.camera = CameraCard(self)
+        self.camera = CameraCard(self, large=True)
 
         self.camera.grid(
             row=0,
             column=0,
             sticky="nsew",
-            padx=(0,15)
+            padx=(0,15),
+            pady=10
         )
 
         # ================= RIGHT PANEL =================
@@ -42,11 +42,14 @@ class LiveMonitoringPage(ctk.CTkFrame):
         right.grid(
             row=0,
             column=1,
-            sticky="nsew"
+            sticky="nsew",
+            padx=(10,0),
+            pady=10
         )
-
-        right.grid_rowconfigure(0, weight=0)
-        right.grid_rowconfigure(1, weight=1)
+        
+        right.grid_columnconfigure(0, weight=1)
+        right.grid_rowconfigure(0, weight=1)
+        right.grid_rowconfigure(1, weight=2)
 
         # ================= DRIVER INFO =================
 
@@ -60,7 +63,8 @@ class LiveMonitoringPage(ctk.CTkFrame):
         info.grid(
             row=0,
             column=0,
-            sticky="ew",
+            sticky="nsew",
+            padx=0,
             pady=(0,15)
         )
 
@@ -110,10 +114,12 @@ class LiveMonitoringPage(ctk.CTkFrame):
 
         # ================= DRIVER STATUS =================
 
-        self.driver = DriverCard(right)
-
+        self.driver = DriverStatusCard(right)
+        
         self.driver.grid(
             row=1,
             column=0,
-            sticky="nsew"
+            sticky="nsew",
+            padx=0,
+            pady=(10, 0)
         )

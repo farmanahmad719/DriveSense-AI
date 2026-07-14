@@ -4,7 +4,7 @@ from theme import *
 
 class CameraCard(ctk.CTkFrame):
 
-    def __init__(self, parent):
+    def __init__(self, parent, large=False):
 
         super().__init__(
             parent,
@@ -13,6 +13,7 @@ class CameraCard(ctk.CTkFrame):
             width=400,
             height=350
         )
+
 
         #self.grid_propagate(False)
         self.pack_propagate(False)
@@ -69,12 +70,19 @@ class CameraCard(ctk.CTkFrame):
         # Camera Area
         # =========================
 
+        if large:
+            camera_height = 470
+            camera_width = 650
+        else:
+            camera_height = 280
+            camera_width = 370
+
         self.camera_frame = ctk.CTkFrame(
             self,
             fg_color="#202938",
             corner_radius=15,
-            width=370,
-            height=280
+            width=camera_width,
+            height=camera_height
         )
 
         self.camera_frame.pack(
