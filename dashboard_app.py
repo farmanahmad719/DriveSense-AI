@@ -1,6 +1,6 @@
 import customtkinter as ctk
 
-from src.dashboard.dashboard import Dashboard
+from src.pages.dashboard import Dashboard
 
 # Global Theme
 ctk.set_appearance_mode("Dark")

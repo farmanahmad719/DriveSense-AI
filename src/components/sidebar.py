@@ -2,12 +2,11 @@ import customtkinter as ctk
 from theme import *
 import os
 import glob
-import subprocess
 
 
 class Sidebar(ctk.CTkFrame):
 
-    def __init__(self, parent):
+    def __init__(self, parent, page_callback):
 
         super().__init__(
             parent,
@@ -15,6 +14,8 @@ class Sidebar(ctk.CTkFrame):
             fg_color=SIDEBAR,
             corner_radius=0
         )
+
+        self.page_callback = page_callback
 
         self.grid_propagate(False)
 
@@ -30,7 +31,7 @@ class Sidebar(ctk.CTkFrame):
         self.logo.pack(pady=(30, 40))
 
         # ---------------- Navigation ----------------
-        
+
         self.menu_buttons = {}
 
         menus = [
@@ -53,7 +54,7 @@ class Sidebar(ctk.CTkFrame):
                 anchor="w",
                 height=45,
                 font=("Segoe UI", 15),
-                command=lambda i=item: self.select_menu(i)
+                command=lambda i=item: self.change_page(i)
             )
 
             button.pack(
@@ -64,14 +65,14 @@ class Sidebar(ctk.CTkFrame):
 
             self.menu_buttons[item] = button
 
-        # ---------------- Push utilities to bottom ----------------
+        # Push utilities to bottom
 
         ctk.CTkLabel(
             self,
             text=""
         ).pack(expand=True)
 
-        # ---------------- Divider ----------------
+        # Divider
 
         divider = ctk.CTkFrame(
             self,
@@ -121,9 +122,24 @@ class Sidebar(ctk.CTkFrame):
             padx=15,
             pady=(5, 20)
         )
-        self.select_menu("Dashboard")
+
+        # Default page
 
         self.select_menu("Dashboard")
+
+    # ===================================================
+    # Page Navigation
+    # ===================================================
+
+    def change_page(self, page):
+
+        self.select_menu(page)
+
+        self.page_callback(page)
+
+    # ===================================================
+    # Report
+    # ===================================================
 
     def open_latest_report(self):
 
@@ -137,6 +153,10 @@ class Sidebar(ctk.CTkFrame):
 
         os.startfile(latest_report)
 
+    # ===================================================
+    # Highlight Selected Menu
+    # ===================================================
+
     def select_menu(self, selected):
 
         for name, button in self.menu_buttons.items():
@@ -144,7 +164,7 @@ class Sidebar(ctk.CTkFrame):
             if name == selected:
 
                 button.configure(
-                        fg_color="#165C3D"   # translucent green
+                    fg_color="#165C3D"
                 )
 
             else:
