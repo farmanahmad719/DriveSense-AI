@@ -1,7 +1,7 @@
 import cv2
 import time
+import config
 
-from src.logger.session_logger import SessionLogger
 from src.camera.camera import CameraManager
 from src.detection.face_detector import FaceDetector
 from src.blink.blink_detector import BlinkDetector
@@ -13,6 +13,8 @@ from src.head_pose.head_pose_estimator import HeadPoseEstimator
 from src.distraction.distraction_detector import DistractionDetector
 from src.reports.report_generator import ReportGenerator
 from src.logger.session_logger import SessionLogger
+from src.utils.video_writer import VideoWriterManager
+from src.utils.screenshot_manager import ScreenshotManager
 from src.utils.eye_utils import (
     LEFT_EYE,
     RIGHT_EYE,
@@ -24,9 +26,25 @@ from src.utils.eye_utils import (
     calculate_ear,
     calculate_mar,
 )
-
 def main():
+    print("\n========== DriveSense AI ==========")
+    print("1. Live Camera")
+    print("2. Recorded Video")
 
+    choice = input("\nSelect source (1/2): ")
+
+    if choice == "1":
+
+        source = 0
+
+    elif choice == "2":
+
+        source = input("Enter video path: ")
+
+    else:
+
+        print("Invalid choice")
+        return
     camera = CameraManager()
     detector = FaceDetector()
     blink_detector = BlinkDetector()
@@ -38,11 +56,22 @@ def main():
     distraction_detector = DistractionDetector()
     logger = SessionLogger()
     report_generator = ReportGenerator()
+    screenshot_manager = ScreenshotManager()
+    video_writer = VideoWriterManager()
+
     previous_drowsy = False
     previous_distracted = False
-    camera.open_camera()
+
+    camera.open_camera(source)
+
+    video_writer.initialize(
+        camera.get_width(),
+        camera.get_height(),
+        camera.get_fps(),
+    )
 
     previous_time = time.time()
+
     drowsiness_events = 0
     distraction_events = 0
 
@@ -61,9 +90,13 @@ def main():
         ret, frame = camera.read_frame()
 
         if not ret:
-            print("Failed to read frame.")
-            break
 
+            if config.INPUT_SOURCE == "video":
+                print("Video completed.")
+            else:
+                print("Failed to read frame.")
+
+            break
         results = detector.detect_faces(frame)
 
         if results.multi_face_landmarks:
@@ -114,6 +147,7 @@ def main():
                     "DISTRACTION",
                     f"Driver looking {direction}"
                 )
+                screenshot_manager.save(frame, "distracted")
 
             if not is_distracted and previous_distracted:
                 logger.log(
@@ -131,6 +165,7 @@ def main():
             if is_drowsy and not previous_drowsy:
                 drowsiness_events += 1
                 logger.log("DROWSINESS", "Driver became drowsy")
+                screenshot_manager.save(frame, "drowsy")
 
             if not is_drowsy and previous_drowsy:
                 logger.log("ALERT", "Driver became alert again")
@@ -163,6 +198,11 @@ def main():
         fps = 1 / (current_time - previous_time)
 
         previous_time = current_time
+        video_writer.initialize(
+            camera.get_width(),
+            camera.get_height(),
+            camera.get_fps(),
+        )
 
         cv2.putText(
             frame,
@@ -319,7 +359,8 @@ def main():
                 (255, 255, 255),
                 3,
             )
-
+            
+        video_writer.write(frame)
         cv2.imshow("DriveSense AI", frame)
 
         if cv2.waitKey(1) & 0xFF == ord("q"):
@@ -349,7 +390,7 @@ def main():
         average_ear=average_ear,
         average_mar=average_mar,
     )    
-
+    video_writer.release()
     camera.release_camera()
     cv2.destroyAllWindows()
 

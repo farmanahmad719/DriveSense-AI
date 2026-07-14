@@ -17,3 +17,7 @@ WINDOW_NAME = "DriveSense AI"
 SHOW_FPS = True
 
 SHOW_LANDMARKS = True
+
+INPUT_SOURCE = "camera"
+
+VIDEO_PATH = "videos/demo.mp4"
