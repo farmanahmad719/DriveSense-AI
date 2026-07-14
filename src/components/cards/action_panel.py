@@ -1,7 +1,6 @@
 import customtkinter as ctk
 from theme import *
 
-
 class ActionPanel(ctk.CTkFrame):
 
     def __init__(self, parent, graph_callback):

@@ -40,14 +40,30 @@ class CameraCard(ctk.CTkFrame):
 
         title.pack(side="left")
 
-        live = ctk.CTkLabel(
+        live_frame = ctk.CTkFrame(
             header,
-            text="● LIVE",
-            text_color="#00E676",
-            font=("Segoe UI",13,"bold")
+            fg_color="transparent"
         )
 
-        live.pack(side="right")
+        live_frame.pack(side="right")
+
+        self.live_dot = ctk.CTkLabel(
+            live_frame,
+            text="●",
+            text_color=ACCENT,
+            font=("Segoe UI", 14, "bold")
+        )
+
+        self.live_dot.pack(side="left", padx=(0, 4))
+
+        ctk.CTkLabel(
+            live_frame,
+            text="LIVE",
+            font=("Segoe UI", 13, "bold")
+         ).pack(side="left")
+
+        self.live_visible = True
+        self.blink_live()
 
         # =========================
         # Camera Area
@@ -121,8 +137,44 @@ class CameraCard(ctk.CTkFrame):
                 font=("Segoe UI",13)
             ).pack(side="left")
 
-            ctk.CTkLabel(
+            value_label = ctk.CTkLabel(
                 row,
                 text=value,
                 font=("Segoe UI",13,"bold")
-            ).pack(side="right")
+            )
+
+            value_label.pack(side="right")
+
+            if title == "🟢 Status":
+                self.status_label = value_label
+
+        self.after(5000, lambda: self.set_connection(False))
+        self.after(10000, lambda: self.set_connection(True))
+
+    def blink_live(self):
+
+        if self.live_visible:
+            self.live_dot.configure(text_color=ACCENT)
+        else:
+            self.live_dot.configure(text_color=CARD)
+
+        self.live_visible = not self.live_visible
+
+        self.after(500, self.blink_live)
+
+
+    def set_connection(self, connected):
+
+        if connected:
+
+            self.status_label.configure(
+                text="Connected",
+                text_color=ACCENT
+            )
+
+        else:
+
+            self.status_label.configure(
+                text="Disconnected",
+                text_color=RED
+            )
