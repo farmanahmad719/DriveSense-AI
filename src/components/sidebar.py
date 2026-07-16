@@ -1,4 +1,5 @@
 import customtkinter as ctk
+from PIL import Image
 from theme import *
 import os
 import glob
@@ -21,14 +22,33 @@ class Sidebar(ctk.CTkFrame):
 
         # ---------------- Logo ----------------
 
-        self.logo = ctk.CTkLabel(
-            self,
-            text="🚗 DriveSense AI",
-            font=("Segoe UI", 22, "bold"),
-            text_color="white"
+        # self.logo = ctk.CTkLabel(
+        #     self,
+        #     text="🚗 DriveSense AI",
+        #     font=("Segoe UI", 22, "bold"),
+        #     text_color="white"
+        # )
+
+        # self.logo.pack(pady=(30, 40))
+
+        logo_image = Image.open(
+            "assets/logo.png"
         )
 
-        self.logo.pack(pady=(30, 40))
+        self.logo = ctk.CTkImage(
+            light_image=logo_image,
+            dark_image=logo_image,
+            size=(210, 80)
+        )
+
+        ctk.CTkLabel(
+            self,
+            image=self.logo,
+            text=""
+        ).pack(
+            padx=15,
+            pady=(20, 30)
+        )
 
         # ---------------- Navigation ----------------
 
