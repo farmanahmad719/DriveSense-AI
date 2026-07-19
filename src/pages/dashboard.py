@@ -103,6 +103,8 @@ class Dashboard(ctk.CTk):
 
     def show_page(self, page):
 
+        self.navbar.update_title(page)
+
         if self.current_page is not None:
             self.current_page.destroy()
 
@@ -153,7 +155,7 @@ class Dashboard(ctk.CTk):
             self.current_page = ctk.CTkLabel(
                 self.page_container,
                 text=f"{page}\n\nComing Soon",
-                font=("Segoe UI", 28, "bold")
+                font=("Segoe UI", 25, "bold")
             )
 
         self.current_page.grid(
