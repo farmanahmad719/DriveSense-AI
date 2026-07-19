@@ -15,11 +15,14 @@ class CameraPanel(ctk.CTkFrame):
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(0, weight=1)
 
-
-        self.camera = CameraCard(parent)
+        self.camera = CameraCard(self)
 
         self.camera.grid(
             row=0,
             column=0,
             sticky="nsew"
         )
+
+    def update_frame(self, frame):
+
+        self.camera.update_frame(frame)

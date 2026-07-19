@@ -3,6 +3,7 @@ from theme import *
 
 from src.components.sidebar import Sidebar
 from src.components.navbar import Navbar
+from src.engine.detection_engine import DetectionEngine
 
 from src.pages.dashboard_page import DashboardPage
 from src.pages.live_monitoring import LiveMonitoringPage
@@ -26,7 +27,15 @@ class Dashboard(ctk.CTk):
         self.minsize(1400, 800)
 
         self.configure(fg_color=BACKGROUND)
+        # ================= BACKEND =================
 
+        self.engine = DetectionEngine()
+
+        self.engine.start(0)
+
+        self.current_result = None
+
+        self.after(30, self.update_detection)
         # ================= GRID =================
 
         self.grid_columnconfigure(0, weight=0)
@@ -97,67 +106,127 @@ class Dashboard(ctk.CTk):
         self.page_container.grid_columnconfigure(0, weight=1)
 
         # ================= LOAD DASHBOARD PAGE =================
-
+        self.analytics_page = None
         self.current_page = None
         self.show_page("Dashboard")
 
     def show_page(self, page):
 
+    # Hide current page
         if self.current_page is not None:
-            self.current_page.destroy()
+
+            self.current_page.grid_forget()
+
+        # ================= DASHBOARD =================
 
         if page == "Dashboard":
 
-            self.current_page = DashboardPage(
-                self.page_container
-            )
+            if not hasattr(self, "dashboard_page"):
+
+                self.dashboard_page = DashboardPage(
+                    self.page_container,
+                    self
+                )
+
+            self.current_page = self.dashboard_page
+
+        # ================= LIVE MONITORING =================
 
         elif page == "Live Monitoring":
 
-            self.current_page = LiveMonitoringPage(
-                self.page_container
-            )
+            if not hasattr(self, "live_monitoring_page"):
+
+                self.live_monitoring_page = LiveMonitoringPage(
+                    self.page_container
+                )
+
+            self.current_page = self.live_monitoring_page
+
+        # ================= ANALYTICS =================
 
         elif page == "Analytics":
-            
-            self.current_page = AnalyticsPage(
-                self.page_container
-            )
+
+            if not hasattr(self, "analytics_page"):
+
+                self.analytics_page = AnalyticsPage(
+                    self.page_container
+                )
+
+            self.current_page = self.analytics_page
+
+        # ================= ALERTS =================
 
         elif page == "Alerts":
 
-            self.current_page = AlertsPage(
-                self.page_container
-            ) 
+            if not hasattr(self, "alerts_page"):
+
+                self.alerts_page = AlertsPage(
+                    self.page_container
+                )
+
+            self.current_page = self.alerts_page
+
+        # ================= REPORTS =================
 
         elif page == "Reports":
 
-            self.current_page = ReportsPage(
-                self.page_container
-            )
+            if not hasattr(self, "reports_page"):
+
+                self.reports_page = ReportsPage(
+                    self.page_container
+                )
+
+            self.current_page = self.reports_page
+
+        # ================= SETTINGS =================
 
         elif page == "Settings":
 
-            self.current_page = SettingsPage(
-                self.page_container
-            )
+            if not hasattr(self, "settings_page"):
+
+                self.settings_page = SettingsPage(
+                    self.page_container
+                )
+
+            self.current_page = self.settings_page
+
+        # ================= HELP =================
 
         elif page == "Help":
 
-            self.current_page = HelpPage(
-                self.page_container
-            )
+            if not hasattr(self, "help_page"):
 
-        else:
+                self.help_page = HelpPage(
+                    self.page_container
+                )
 
-            self.current_page = ctk.CTkLabel(
-                self.page_container,
-                text=f"{page}\n\nComing Soon",
-                font=("Segoe UI", 28, "bold")
-            )
+            self.current_page = self.help_page
+
+        # ================= SHOW PAGE =================
 
         self.current_page.grid(
             row=0,
             column=0,
             sticky="nsew"
         )
+    def update_detection(self):
+
+        ret, result = self.engine.process_frame()
+
+        if ret and result is not None:
+
+            self.current_result = result
+
+            if hasattr(
+                self.current_page,
+                "update_detection_result"
+            ):
+
+                self.current_page.update_detection_result(
+                    result
+                )
+
+        self.after(
+            30,
+            self.update_detection
+        )  

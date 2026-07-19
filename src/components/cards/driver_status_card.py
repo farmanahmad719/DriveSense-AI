@@ -44,7 +44,7 @@ class DriverStatusCard(ctk.CTkFrame):
             fg_color="#2A3445",
             height=2
         ).pack(fill="x", padx=20, pady=(0, 15))
-
+        self.metric_labels = {}
         # ---------------- Live Metrics ----------------
 
         self.add_row("Attention", "95%")
@@ -113,6 +113,8 @@ class DriverStatusCard(ctk.CTkFrame):
         )
 
         value_label.pack(side="right")
+        self.metric_labels[title] = value_label
+        
 
     # =======================================
 
@@ -177,3 +179,65 @@ class DriverStatusCard(ctk.CTkFrame):
             self.status_label.configure(
                 text_color="white"
             )
+    def update_data(self, result):
+
+    # ---------------- Status ----------------
+
+        if result.is_drowsy:
+
+            self.set_status("DROWSY")
+
+        elif result.is_distracted:
+
+            self.set_status("DISTRACTED")
+
+        else:
+
+            self.set_status("AWAKE")
+
+        # ---------------- Attention ----------------
+
+        attention = max(
+            0,
+            min(
+                100,
+                100 - result.fatigue_score
+            )
+        )
+
+        self.metric_labels["Attention"].configure(
+            text=f"{attention}%"
+        )
+
+        # ---------------- Fatigue ----------------
+
+        self.metric_labels["Fatigue"].configure(
+            text=f"{result.fatigue_score}%"
+        )
+
+        # ---------------- Eyes ----------------
+
+        eyes = "CLOSED" if result.is_drowsy else "OPEN"
+
+        self.metric_labels["Eyes"].configure(
+            text=eyes
+        )
+
+        # ---------------- Head ----------------
+
+        self.metric_labels["Head"].configure(
+            text=result.direction
+        )
+
+        # ---------------- Blinks ----------------
+
+        self.metric_labels["Blinks"].configure(
+            text=str(result.blink_count)
+        )
+
+        # ---------------- Yawns ----------------
+
+        self.metric_labels["Yawns"].configure(
+            text=str(result.yawn_count)
+        )
+   

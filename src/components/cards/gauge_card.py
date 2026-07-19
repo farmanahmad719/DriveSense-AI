@@ -58,3 +58,6 @@ class GaugeCard(ctk.CTkFrame):
             column=0,
             pady=(0,15)
         )
+    def update_value(self, value):
+
+        self.gauge.set_value(value)    
