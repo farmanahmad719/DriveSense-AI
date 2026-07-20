@@ -66,7 +66,14 @@ class DetectionCard(ctk.CTkFrame):
 
     def update_data(self, result):
 
-        # Face
+        print(
+            "DetectionCard:",
+            "face_detected =", result.face_detected,
+            "is_drowsy =", result.is_drowsy,
+            "direction =", result.direction
+        )
+
+        # ---------------- Face ----------------
 
         if result.face_detected:
 
@@ -80,7 +87,7 @@ class DetectionCard(ctk.CTkFrame):
                 text="❌ Face"
             )
 
-        # Eyes
+        # ---------------- Eyes ----------------
 
         if result.is_drowsy:
 
@@ -94,13 +101,13 @@ class DetectionCard(ctk.CTkFrame):
                 text="✅ Eyes"
             )
 
-        # Phone
+        # ---------------- Phone ----------------
 
         self.phone_label.configure(
             text="❌ Phone"
         )
 
-        # Head
+        # ---------------- Head ----------------
 
         if result.direction == "FORWARD":
 
@@ -112,12 +119,4 @@ class DetectionCard(ctk.CTkFrame):
 
             self.head_label.configure(
                 text="⚠️ Head"
-            )
-    def update_data(self, result):
-
-        print(
-            "DetectionCard:",
-            "face_detected =", result.face_detected,
-            "is_drowsy =", result.is_drowsy,
-            "direction =", result.direction
-        )        
+            )       

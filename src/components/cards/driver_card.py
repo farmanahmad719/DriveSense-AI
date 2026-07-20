@@ -1,4 +1,5 @@
 import customtkinter as ctk
+
 from theme import *
 
 
@@ -15,11 +16,17 @@ class DriverCard(ctk.CTkFrame):
 
         self.pack_propagate(False)
 
+        # ---------------- Title ----------------
+
         ctk.CTkLabel(
             self,
             text="👤 Driver",
             font=("Segoe UI", 14, "bold")
-        ).pack(pady=(15, 30))
+        ).pack(
+            pady=(15, 30)
+        )
+
+        # ---------------- Status ----------------
 
         self.status_label = ctk.CTkLabel(
             self,
@@ -33,22 +40,20 @@ class DriverCard(ctk.CTkFrame):
         self.current_status = "AWAKE"
         self.blink_on = True
 
-        self.after(3000, lambda: self.set_status("DROWSY"))
-        self.after(8000, lambda: self.set_status("AWAKE"))
-        self.after(13000, lambda: self.set_status("DISTRACTED"))
+    # =======================================
 
     def set_status(self, status):
 
-        self.current_status = status
+        self.current_status = status.upper()
 
-        if status == "AWAKE":
+        if self.current_status == "AWAKE":
 
             self.status_label.configure(
                 text="AWAKE",
                 text_color=ACCENT
             )
 
-        elif status == "DROWSY":
+        elif self.current_status == "DROWSY":
 
             self.status_label.configure(
                 text="DROWSY",
@@ -57,7 +62,7 @@ class DriverCard(ctk.CTkFrame):
 
             self.blink_status()
 
-        elif status == "DISTRACTED":
+        elif self.current_status == "DISTRACTED":
 
             self.status_label.configure(
                 text="DISTRACTED",
@@ -66,16 +71,51 @@ class DriverCard(ctk.CTkFrame):
 
             self.blink_status()
 
+    # =======================================
+
+    def update_data(self, result):
+
+        if result.is_drowsy:
+
+            self.set_status(
+                "DROWSY"
+            )
+
+        elif result.is_distracted:
+
+            self.set_status(
+                "DISTRACTED"
+            )
+
+        else:
+
+            self.set_status(
+                "AWAKE"
+            )
+
+    # =======================================
+
     def blink_status(self):
 
         if self.current_status == "AWAKE":
+
             return
 
         if self.blink_on:
-            self.status_label.configure(text_color=RED)
+
+            self.status_label.configure(
+                text_color=RED
+            )
+
         else:
-            self.status_label.configure(text_color=CARD)
+
+            self.status_label.configure(
+                text_color=CARD
+            )
 
         self.blink_on = not self.blink_on
 
-        self.after(500, self.blink_status)
+        self.after(
+            500,
+            self.blink_status
+        )

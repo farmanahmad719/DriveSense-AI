@@ -102,13 +102,9 @@ class DetectionEngine:
         result.yawn_count = self.yawn_detector.total_yawns
 
         # Drowsiness
-        result.is_drowsy = self.drowsiness_detector.update(ear)
-        if result.is_drowsy:
-            self.alarm.play_alarm()
-        else:
-            self.alarm.stop_alarm()
-     
-
+        result.is_drowsy = self.drowsiness_detector.update(
+            ear
+        )
         # Fatigue Score
         result.fatigue_score = self.fatigue_score.update(
             result.is_drowsy,
@@ -146,6 +142,15 @@ class DetectionEngine:
         result.is_distracted = self.distraction_detector.update(
             result.direction
         )
+        # Alarm
+
+        if result.is_drowsy or result.is_distracted:
+
+            self.alarm.play_alarm()
+
+        else:
+
+            self.alarm.stop_alarm()
 
         # Draw Eye Points
         frame = draw_eye_points(frame, left_eye_pixels)

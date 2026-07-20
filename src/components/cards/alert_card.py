@@ -1,6 +1,6 @@
 import customtkinter as ctk
-from theme import *
 
+from theme import *
 from src.alerts.alert_system import AlertSystem
 
 
@@ -12,10 +12,12 @@ class AlertCard(ctk.CTkFrame):
             parent,
             fg_color=CARD,
             corner_radius=18,
-            height=10
+            height=180
         )
 
         self.pack_propagate(False)
+
+        # ---------------- Title ----------------
 
         title = ctk.CTkLabel(
             self,
@@ -28,6 +30,8 @@ class AlertCard(ctk.CTkFrame):
             padx=15,
             pady=(15, 10)
         )
+
+        # ---------------- Alert Textbox ----------------
 
         self.textbox = ctk.CTkTextbox(
             self,
@@ -42,44 +46,104 @@ class AlertCard(ctk.CTkFrame):
             pady=(0, 15)
         )
 
+        # ---------------- Alert System ----------------
+
         self.alert_system = AlertSystem()
 
-        # Initial Alerts
+        # Prevent repeated alerts every frame
+        self.previous_drowsy = False
+        self.previous_distracted = False
+        self.previous_yawn_count = 0
+
+        # Initial alert
         self.alert_system.add_alert(
             "INFO",
             "Drive session started"
         )
 
-        self.alert_system.add_alert(
-            "INFO",
-            "Driver Awake"
-        )
-
         self.refresh_alerts()
 
-        self.add_alert("WARNING", "Yawn Detected")
-        self.add_alert("CRITICAL", "Driver Distracted")
+    # =======================================
+
+    def update_data(self, result):
+
+        # ---------------- Drowsiness ----------------
+
+        if result.is_drowsy and not self.previous_drowsy:
+
+            self.add_alert(
+                "CRITICAL",
+                "Driver Drowsiness Detected"
+            )
+
+        self.previous_drowsy = result.is_drowsy
+
+        # ---------------- Distraction ----------------
+
+        if result.is_distracted and not self.previous_distracted:
+
+            self.add_alert(
+                "WARNING",
+                "Driver Distracted"
+            )
+
+        self.previous_distracted = result.is_distracted
+
+        # ---------------- Yawn ----------------
+
+        if result.yawn_count > self.previous_yawn_count:
+
+            self.add_alert(
+                "WARNING",
+                "Yawn Detected"
+            )
+
+        self.previous_yawn_count = result.yawn_count
+
+    # =======================================
 
     def refresh_alerts(self):
-        self.textbox.delete("1.0", "end")
 
-        self.textbox.tag_config("INFO", foreground=ACCENT)
-        self.textbox.tag_config("WARNING", foreground=ORANGE)
-        self.textbox.tag_config("CRITICAL", foreground=RED)
+        self.textbox.delete(
+            "1.0",
+            "end"
+        )
+
+        self.textbox.tag_config(
+            "INFO",
+            foreground=ACCENT
+        )
+
+        self.textbox.tag_config(
+            "WARNING",
+            foreground=ORANGE
+        )
+
+        self.textbox.tag_config(
+            "CRITICAL",
+            foreground=RED
+        )
 
         for alert in self.alert_system.get_alerts():
 
             severity = alert["severity"]
 
-        # Colored status dot
-            self.textbox.insert("end", "● ", severity)
+            self.textbox.insert(
+                "end",
+                "● ",
+                severity
+            )
 
-        # Normal white text
             self.textbox.insert(
                 "end",
                 f"{alert['time']}   {alert['message']}\n"
             )
-        self.textbox.see("end")
+
+        self.textbox.see(
+            "end"
+        )
+
+    # =======================================
 
     def add_alert(self, severity, message):
 

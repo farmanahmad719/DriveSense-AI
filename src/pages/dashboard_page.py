@@ -67,8 +67,9 @@ class DashboardPage(ctk.CTkFrame):
         self.content.update_detection_result(
             result
         )
+        self.bottom.update_data(result)
 
-    # =================================================
+        # =================================================
     # CLEANUP
     # =================================================
 

@@ -86,3 +86,20 @@ class BottomRow(ctk.CTkFrame):
         self.detection_card.update_data(
             result
         )
+
+        self.alert_card.update_data(
+            result
+        )
+
+        self.trip_card.update_data(
+            result
+        )
+
+        alert_count = len(
+            self.alert_card.alert_system.get_alerts()
+        )
+
+        self.trip_card.update_alert_count(
+            alert_count
+        )
+        self.trip_card.update_duration()

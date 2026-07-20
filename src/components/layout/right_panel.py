@@ -95,3 +95,6 @@ class RightPanel(ctk.CTkFrame):
             fps,
             "Online"
         )
+        self.graph.update_data(
+            result
+        )
