@@ -7,6 +7,7 @@ from src.yawn.yawn_detector import YawnDetector
 from src.scoring.fatigue_score import FatigueScore
 from src.head_pose.head_pose_estimator import HeadPoseEstimator
 from src.distraction.distraction_detector import DistractionDetector
+from src.utils.screenshot_manager import ScreenshotManager
 from src.alerts.alarm import AlarmManager
 from src.utils.eye_utils import (
     LEFT_EYE,
@@ -33,6 +34,11 @@ class DetectionEngine:
         self.head_pose = HeadPoseEstimator()
         self.distraction_detector = DistractionDetector()
         self.alarm = AlarmManager()
+
+        self.screenshot_manager = ScreenshotManager()
+
+        self.previous_drowsy = False
+        self.previous_distracted = False
     def start(self, source):
 
         self.camera.open_camera(source)
@@ -142,6 +148,24 @@ class DetectionEngine:
         result.is_distracted = self.distraction_detector.update(
             result.direction
         )
+        # ================= SCREENSHOTS =================
+
+        if result.is_drowsy and not self.previous_drowsy:
+
+            self.screenshot_manager.save(
+                frame,
+                "drowsiness"
+            )
+
+        if result.is_distracted and not self.previous_distracted:
+
+            self.screenshot_manager.save(
+                frame,
+                "distraction"
+            )
+
+        self.previous_drowsy = result.is_drowsy
+        self.previous_distracted = result.is_distracted
         # Alarm
 
         if result.is_drowsy or result.is_distracted:

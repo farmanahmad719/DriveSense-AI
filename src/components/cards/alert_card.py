@@ -1,4 +1,5 @@
 import customtkinter as ctk
+import os
 
 from theme import *
 from src.alerts.alert_system import AlertSystem
@@ -45,6 +46,15 @@ class AlertCard(ctk.CTkFrame):
             padx=15,
             pady=(0, 15)
         )
+        self.view_button = ctk.CTkButton(
+            self,
+            text="📸 View Latest Screenshot",
+            command=self.view_latest_screenshot
+        )
+
+        self.view_button.pack(
+            pady=(0, 15)
+        )
 
         # ---------------- Alert System ----------------
 
@@ -68,12 +78,16 @@ class AlertCard(ctk.CTkFrame):
     def update_data(self, result):
 
         # ---------------- Drowsiness ----------------
-
         if result.is_drowsy and not self.previous_drowsy:
+
+            screenshot = self.find_latest_screenshot(
+                "drowsiness"
+            )
 
             self.add_alert(
                 "CRITICAL",
-                "Driver Drowsiness Detected"
+                "Driver Drowsiness Detected",
+                screenshot
             )
 
         self.previous_drowsy = result.is_drowsy
@@ -82,9 +96,14 @@ class AlertCard(ctk.CTkFrame):
 
         if result.is_distracted and not self.previous_distracted:
 
+            screenshot = self.find_latest_screenshot(
+                "distraction"
+            )
+
             self.add_alert(
                 "WARNING",
-                "Driver Distracted"
+                "Driver Distracted",
+                screenshot
             )
 
         self.previous_distracted = result.is_distracted
@@ -145,11 +164,89 @@ class AlertCard(ctk.CTkFrame):
 
     # =======================================
 
-    def add_alert(self, severity, message):
-
-        self.alert_system.add_alert(
+    def add_alert(
+            self,
             severity,
-            message
+            message,
+            screenshot=None
+        ):
+
+            self.alert_system.add_alert(
+                severity,
+                message,
+                screenshot
+            )
+
+            self.refresh_alerts()
+    def find_latest_screenshot(self, event):
+
+        if not os.path.exists("alerts"):
+
+            return None
+
+        files = [
+
+            file
+
+            for file in os.listdir("alerts")
+
+            if file.startswith(event)
+
+            and file.endswith(".png")
+        ]
+
+        if not files:
+
+            return None
+
+        files.sort(
+            key=lambda file: os.path.getmtime(
+                os.path.join(
+                    "alerts",
+                    file
+                )
+            ),
+            reverse=True
         )
 
-        self.refresh_alerts()
+        return os.path.join(
+            "alerts",
+            files[0]
+        )    
+    def view_latest_screenshot(self):
+
+        if not os.path.exists("alerts"):
+
+            return
+
+        files = [
+
+            file
+
+            for file in os.listdir("alerts")
+
+            if file.endswith(".png")
+        ]
+
+        if not files:
+
+            return
+
+        files.sort(
+            key=lambda file: os.path.getmtime(
+                os.path.join(
+                    "alerts",
+                    file
+                )
+            ),
+            reverse=True
+        )
+
+        latest_file = os.path.join(
+            "alerts",
+            files[0]
+        )
+
+        os.startfile(
+            latest_file
+        )    

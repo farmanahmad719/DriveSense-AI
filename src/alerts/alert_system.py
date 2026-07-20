@@ -8,16 +8,21 @@ class AlertSystem:
         self.max_alerts = max_alerts
         self.alerts = []
 
-    def add_alert(self, severity, message):
+    def add_alert(
+        self,
+        severity,
+        message,
+        screenshot=None
+    ):
 
         timestamp = datetime.now().strftime("%H:%M:%S")
 
         alert = {
             "time": timestamp,
             "severity": severity,
-            "message": message
+            "message": message,
+            "screenshot": screenshot
         }
-
         self.alerts.insert(0, alert)
 
         if len(self.alerts) > self.max_alerts:

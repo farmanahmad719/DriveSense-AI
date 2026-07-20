@@ -1,6 +1,7 @@
 import customtkinter as ctk
 from theme import *
 import time
+from tkinter import filedialog
 from src.components.sidebar import Sidebar
 from src.components.navbar import Navbar
 from src.engine.detection_engine import DetectionEngine
@@ -139,7 +140,8 @@ class Dashboard(ctk.CTk):
             if not hasattr(self, "live_monitoring_page"):
 
                 self.live_monitoring_page = LiveMonitoringPage(
-                    self.page_container
+                    self.page_container,
+                    self
                 )
 
             self.current_page = self.live_monitoring_page
@@ -258,3 +260,68 @@ class Dashboard(ctk.CTk):
             30,
             self.update_detection
         )
+    def select_recorded_video(self):
+
+        video_path = filedialog.askopenfilename(
+            title="Select Recorded Video",
+            filetypes=[
+                (
+                    "Video Files",
+                    "*.mp4 *.avi *.mov *.mkv"
+                ),
+                (
+                    "All Files",
+                    "*.*"
+                )
+            ]
+        )
+
+        if not video_path:
+
+            return
+
+        print(
+            f"🎥 Selected video:\n{video_path}"
+        )
+
+        # Start detection using selected video
+
+        self.engine.start(
+            video_path
+        )    
+    def select_recorded_video(self):
+
+        video_path = filedialog.askopenfilename(
+            title="Select Recorded Video",
+            filetypes=[
+                (
+                    "Video Files",
+                    "*.mp4 *.avi *.mov *.mkv"
+                ),
+                (
+                    "All Files",
+                    "*.*"
+                )
+            ]
+        )
+
+        if not video_path:
+
+            return
+
+        print(
+            f"🎥 Selected video:\n{video_path}"
+        )
+
+        self.engine.start(
+            video_path
+        )    
+    def start_live_camera(self):
+
+        print(
+            "🎥 Switching to live camera"
+        )
+
+        self.engine.start(
+            0
+        )    
