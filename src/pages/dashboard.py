@@ -1,6 +1,6 @@
 import customtkinter as ctk
 from theme import *
-
+import time
 from src.components.sidebar import Sidebar
 from src.components.navbar import Navbar
 from src.engine.detection_engine import DetectionEngine
@@ -34,6 +34,8 @@ class Dashboard(ctk.CTk):
         self.engine.start(0)
 
         self.current_result = None
+        self.session_history = []
+        self.last_history_time = 0
 
         self.after(30, self.update_detection)
         # ================= GRID =================
@@ -146,13 +148,10 @@ class Dashboard(ctk.CTk):
 
         elif page == "Analytics":
 
-            if not hasattr(self, "analytics_page"):
-
-                self.analytics_page = AnalyticsPage(
-                    self.page_container
-                )
-
-            self.current_page = self.analytics_page
+            self.current_page = AnalyticsPage(
+                self.page_container,
+                self
+    )
 
         # ================= ALERTS =================
 
@@ -217,6 +216,8 @@ class Dashboard(ctk.CTk):
 
             self.current_result = result
 
+            # ---------------- LIVE UI ----------------
+
             if hasattr(
                 self.current_page,
                 "update_detection_result"
@@ -226,7 +227,35 @@ class Dashboard(ctk.CTk):
                     result
                 )
 
+            # ---------------- SESSION HISTORY ----------------
+
+            current_time = time.time()
+
+            if current_time - self.last_history_time >= 1:
+
+                self.session_history.append(
+                    result
+                )
+
+                self.last_history_time = current_time
+
+                print(
+                    "History sample added:",
+                    len(self.session_history)
+                )
+
+        # ---------------- ANALYTICS ----------------
+
+        if hasattr(
+            self.current_page,
+            "update_data"
+        ):
+
+            self.current_page.update_data(
+                self.session_history
+            )
+
         self.after(
             30,
             self.update_detection
-        )  
+        )
