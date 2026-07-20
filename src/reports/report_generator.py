@@ -2,6 +2,8 @@ import os
 
 from datetime import datetime
 
+import matplotlib.pyplot as plt
+
 from reportlab.lib.pagesizes import A4
 from reportlab.lib import colors
 
@@ -15,7 +17,9 @@ from reportlab.platypus import (
     Paragraph,
     Spacer,
     Table,
-    TableStyle
+    TableStyle,
+    Image,
+    PageBreak
 )
 
 
@@ -186,6 +190,9 @@ class ReportGenerator:
         if metrics is None:
 
             return None
+        charts = self.create_charts(
+            history
+        )
 
         filename = (
             "session_report_"
@@ -503,6 +510,37 @@ class ReportGenerator:
 
             metrics_table
         )
+        # ================= CHARTS =================
+
+        story.append(
+            PageBreak()
+        )
+
+        story.append(
+
+            Paragraph(
+                "Session Analytics",
+                heading_style
+            )
+        )
+
+        for chart_path in charts:
+
+            story.append(
+
+                Image(
+                    chart_path,
+                    width=500,
+                    height=250
+                )
+            )
+
+            story.append(
+                Spacer(
+                    1,
+                    20
+                )
+            )
 
         # ---------------- FOOTER ----------------
 
@@ -529,3 +567,206 @@ class ReportGenerator:
         )
 
         return filepath
+    def create_charts(self, history):
+
+        if not history:
+
+            return []
+
+        chart_folder = os.path.join(
+            self.reports_folder,
+            "temp_charts"
+        )
+
+        os.makedirs(
+            chart_folder,
+            exist_ok=True
+        )
+
+        x = list(
+            range(
+                len(history)
+            )
+        )
+
+        attention = [
+
+            max(
+                0,
+                min(
+                    100,
+                    100 - result.fatigue_score
+                )
+            )
+
+            for result in history
+        ]
+
+        ear = [
+
+            result.ear
+
+            for result in history
+        ]
+
+        fatigue = [
+
+            result.fatigue_score
+
+            for result in history
+        ]
+
+        charts = []
+
+        # ================= ATTENTION =================
+
+        attention_path = os.path.join(
+            chart_folder,
+            "attention.png"
+        )
+
+        plt.figure(
+            figsize=(8, 4)
+        )
+
+        plt.plot(
+            x,
+            attention,
+            linewidth=2
+        )
+
+        plt.title(
+            "Attention Trend"
+        )
+
+        plt.xlabel(
+            "Time Sample"
+        )
+
+        plt.ylabel(
+            "Attention (%)"
+        )
+
+        plt.ylim(
+            0,
+            100
+        )
+
+        plt.grid(
+            True,
+            alpha=0.3
+        )
+
+        plt.tight_layout()
+
+        plt.savefig(
+            attention_path,
+            dpi=150
+        )
+
+        plt.close()
+
+        charts.append(
+            attention_path
+        )
+
+        # ================= EAR =================
+
+        ear_path = os.path.join(
+            chart_folder,
+            "ear.png"
+        )
+
+        plt.figure(
+            figsize=(8, 4)
+        )
+
+        plt.plot(
+            x,
+            ear,
+            linewidth=2
+        )
+
+        plt.title(
+            "Eye Aspect Ratio (EAR)"
+        )
+
+        plt.xlabel(
+            "Time Sample"
+        )
+
+        plt.ylabel(
+            "EAR"
+        )
+
+        plt.grid(
+            True,
+            alpha=0.3
+        )
+
+        plt.tight_layout()
+
+        plt.savefig(
+            ear_path,
+            dpi=150
+        )
+
+        plt.close()
+
+        charts.append(
+            ear_path
+        )
+
+        # ================= FATIGUE =================
+
+        fatigue_path = os.path.join(
+            chart_folder,
+            "fatigue.png"
+        )
+
+        plt.figure(
+            figsize=(8, 4)
+        )
+
+        plt.plot(
+            x,
+            fatigue,
+            linewidth=2
+        )
+
+        plt.title(
+            "Fatigue Trend"
+        )
+
+        plt.xlabel(
+            "Time Sample"
+        )
+
+        plt.ylabel(
+            "Fatigue Score"
+        )
+
+        plt.ylim(
+            0,
+            100
+        )
+
+        plt.grid(
+            True,
+            alpha=0.3
+        )
+
+        plt.tight_layout()
+
+        plt.savefig(
+            fatigue_path,
+            dpi=150
+        )
+
+        plt.close()
+
+        charts.append(
+            fatigue_path
+        )
+
+        return charts
