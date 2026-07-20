@@ -2,6 +2,7 @@ import customtkinter as ctk
 from datetime import datetime
 from theme import *
 import os
+from src.reports.report_generator import ReportGenerator
 
 class ReportsPage(ctk.CTkFrame):
 
@@ -13,6 +14,7 @@ class ReportsPage(ctk.CTkFrame):
         )
 
         self.dashboard = dashboard
+        self.report_generator = ReportGenerator()
 
         self.grid_columnconfigure(
             0,
@@ -380,9 +382,17 @@ class ReportsPage(ctk.CTkFrame):
         )    
     def generate_report(self):
 
-        history = self.dashboard.session_history
+        history = (
+            self.dashboard.session_history
+        )
 
-        if not history:
+        filepath = (
+            self.report_generator.generate_pdf(
+                history
+            )
+        )
+
+        if filepath is None:
 
             print(
                 "⚠️ No session data available"
@@ -390,183 +400,7 @@ class ReportsPage(ctk.CTkFrame):
 
             return
 
-        # ---------------- METRICS ----------------
-
-        total_blinks = (
-            history[-1].blink_count
+        print(
+            f"✅ PDF report generated:\n"
+            f"{filepath}"
         )
-
-        total_yawns = (
-            history[-1].yawn_count
-        )
-
-        fatigue_values = [
-
-            result.fatigue_score
-
-            for result in history
-        ]
-
-        average_fatigue = sum(
-            fatigue_values
-        ) / len(
-            fatigue_values
-        )
-
-        drowsiness_events = 0
-
-        previous_drowsy = False
-
-        for result in history:
-
-            if (
-                result.is_drowsy
-                and not previous_drowsy
-            ):
-
-                drowsiness_events += 1
-
-            previous_drowsy = (
-                result.is_drowsy
-            )
-
-        distraction_events = 0
-
-        previous_distracted = False
-
-        for result in history:
-
-            if (
-                result.is_distracted
-                and not previous_distracted
-            ):
-
-                distraction_events += 1
-
-            previous_distracted = (
-                result.is_distracted
-            )
-
-        ear_values = [
-
-            result.ear
-
-            for result in history
-        ]
-
-        average_ear = sum(
-            ear_values
-        ) / len(
-            ear_values
-        )
-
-        mar_values = [
-
-            result.mar
-
-            for result in history
-        ]
-
-        average_mar = sum(
-            mar_values
-        ) / len(
-            mar_values
-        )
-
-        # ---------------- RISK ----------------
-
-        if average_fatigue >= 60:
-
-            risk = "HIGH"
-
-        elif average_fatigue >= 30:
-
-            risk = "MEDIUM"
-
-        else:
-
-            risk = "LOW"
-
-        # ---------------- REPORT TEXT ----------------
-
-            report = f"""
-        ========================================
-                DRIVESENSE AI SESSION REPORT
-        ========================================
-
-        Generated:
-        {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
-
-        ----------------------------------------
-        SESSION SUMMARY
-        ----------------------------------------
-
-        Total Blinks:
-        {total_blinks}
-
-        Total Yawns:
-        {total_yawns}
-
-        Average Fatigue:
-        {average_fatigue:.1f}%
-
-        Drowsiness Events:
-        {drowsiness_events}
-
-        Distraction Events:
-        {distraction_events}
-
-        Average EAR:
-        {average_ear:.3f}
-
-        Average MAR:
-        {average_mar:.3f}
-
-        Risk Level:
-        {risk}
-
-        ========================================
-                END OF REPORT
-        ========================================
-        """
-
-            # ---------------- SAVE REPORT ----------------
-
-            filename = (
-                f"session_report_"
-                f"{datetime.now().strftime('%Y%m%d_%H%M%S')}"
-                f".txt"
-            )
-
-          # ---------------- SAVE REPORT ----------------
-
-            project_root = os.getcwd()
-
-            reports_folder = os.path.join(
-                project_root,
-                "reports"
-            )
-
-            os.makedirs(
-                reports_folder,
-                exist_ok=True
-            )
-
-            filepath = os.path.join(
-                reports_folder,
-                filename
-            )
-
-            with open(
-                filepath,
-                "w",
-                encoding="utf-8"
-            ) as file:
-
-                file.write(
-                    report
-                )
-
-            print(
-                f"✅ Report saved at:\n{filepath}"
-            )    
