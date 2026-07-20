@@ -64,6 +64,7 @@ class AlertCard(ctk.CTkFrame):
         self.previous_drowsy = False
         self.previous_distracted = False
         self.previous_yawn_count = 0
+        self.previous_phone_detected = False
 
         # Initial alert
         self.alert_system.add_alert(
@@ -118,6 +119,21 @@ class AlertCard(ctk.CTkFrame):
             )
 
         self.previous_yawn_count = result.yawn_count
+        # ---------------- Phone ----------------
+
+        if (
+            result.phone_detected
+            and not self.previous_phone_detected
+        ):
+
+            self.add_alert(
+                "CRITICAL",
+                "Phone Usage Detected"
+            )
+
+        self.previous_phone_detected = (
+            result.phone_detected
+        )
 
     # =======================================
 

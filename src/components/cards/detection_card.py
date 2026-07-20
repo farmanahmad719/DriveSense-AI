@@ -103,10 +103,19 @@ class DetectionCard(ctk.CTkFrame):
 
         # ---------------- Phone ----------------
 
-        self.phone_label.configure(
-            text="❌ Phone"
-        )
+        # ---------------- Phone ----------------
 
+        if result.phone_detected:
+
+            self.phone_label.configure(
+                text="✅ Phone"
+            )
+
+        else:
+
+            self.phone_label.configure(
+                text="❌ Phone"
+            )
         # ---------------- Head ----------------
 
         if result.direction == "FORWARD":

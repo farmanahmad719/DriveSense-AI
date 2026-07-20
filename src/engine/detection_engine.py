@@ -1,3 +1,4 @@
+import cv2
 from src.camera.camera import CameraManager
 from src.detection.face_detector import FaceDetector
 from src.engine.detection_result import DetectionResult
@@ -8,6 +9,7 @@ from src.scoring.fatigue_score import FatigueScore
 from src.head_pose.head_pose_estimator import HeadPoseEstimator
 from src.distraction.distraction_detector import DistractionDetector
 from src.utils.screenshot_manager import ScreenshotManager
+from src.detection.phone_detector import PhoneDetector
 from src.alerts.alarm import AlarmManager
 from src.utils.eye_utils import (
     LEFT_EYE,
@@ -33,8 +35,8 @@ class DetectionEngine:
         self.fatigue_score = FatigueScore()
         self.head_pose = HeadPoseEstimator()
         self.distraction_detector = DistractionDetector()
+        self.phone_detector = PhoneDetector()
         self.alarm = AlarmManager()
-
         self.screenshot_manager = ScreenshotManager()
 
         self.previous_drowsy = False
@@ -69,6 +71,56 @@ class DetectionEngine:
             return False, None
 
         result = DetectionResult(frame=frame)
+        print("📱 PHONE DETECTOR CALLED")
+
+        phone_result = (
+            self.phone_detector.detect(frame)
+        )
+
+        result.phone_detected = (
+            phone_result["detected"]
+        )
+
+        result.phone_confidence = (
+            phone_result["confidence"]
+        )
+
+        result.phone_bbox = (
+            phone_result["bbox"]
+        )
+        if result.phone_detected:
+
+            x1, y1, x2, y2 = (
+                result.phone_bbox
+            )
+
+            cv2.rectangle(
+                frame,
+                (x1, y1),
+                (x2, y2),
+                (0, 0, 255),
+                3
+            )
+
+            cv2.putText(
+                frame,
+                f"PHONE {result.phone_confidence:.2f}",
+                (x1, y1 - 10),
+                cv2.FONT_HERSHEY_SIMPLEX,
+                0.8,
+                (0, 0, 255),
+                2
+            )
+
+        print(
+            "ENGINE PHONE RESULT:",
+            result.phone_detected
+        )
+
+        print(
+            "PHONE CONFIDENCE:",
+            result.phone_confidence
+        )
 
         results = self.face_detector.detect_faces(frame)
 
@@ -168,7 +220,11 @@ class DetectionEngine:
         self.previous_distracted = result.is_distracted
         # Alarm
 
-        if result.is_drowsy or result.is_distracted:
+        if (
+            result.is_drowsy
+            or result.is_distracted
+            or result.phone_detected
+        ):
 
             self.alarm.play_alarm()
 

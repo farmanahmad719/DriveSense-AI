@@ -53,7 +53,7 @@ class DriverStatusCard(ctk.CTkFrame):
         self.add_row("Head", "FORWARD")
         self.add_row("Blinks", "23")
         self.add_row("Yawns", "2")
-
+        self.add_row("Phone", "NOT DETECTED")
         # ---------------- Divider ----------------
 
         ctk.CTkFrame(
@@ -183,6 +183,10 @@ class DriverStatusCard(ctk.CTkFrame):
 
     # ---------------- Status ----------------
 
+        print(
+            "UI PHONE RESULT:",
+            result.phone_detected
+        )
         if result.is_drowsy:
 
             self.set_status("DROWSY")
@@ -240,4 +244,14 @@ class DriverStatusCard(ctk.CTkFrame):
         self.metric_labels["Yawns"].configure(
             text=str(result.yawn_count)
         )
-   
+        # ---------------- Phone ----------------
+
+        phone_status = (
+            "DETECTED"
+            if result.phone_detected
+            else "NOT DETECTED"
+        )
+
+        self.metric_labels["Phone"].configure(
+            text=phone_status
+        )

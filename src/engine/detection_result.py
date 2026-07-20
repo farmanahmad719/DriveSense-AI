@@ -29,3 +29,9 @@ class DetectionResult:
     is_drowsy: bool = False
 
     is_distracted: bool = False
+    
+    phone_detected: bool = False
+
+    phone_confidence: float = 0.0
+
+    phone_bbox: tuple = None

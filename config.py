@@ -40,7 +40,7 @@ GAUGE_MAX = 100
 
 
 HEAD_POSE_THRESHOLD = 30    # Degrees - above this = looking away
-PHONE_CONFIDENCE = 0.5      # YOLO confidence threshold for phone detection
+PHONE_CONFIDENCE = 0.50# YOLO confidence threshold for phone detection
 
 # ============================================
 # ATTENTION SCORE SETTINGS
@@ -144,3 +144,4 @@ SHOW_LANDMARKS = True
 INPUT_SOURCE = "camera"
 
 VIDEO_PATH = "videos/demo.mp4"
+
