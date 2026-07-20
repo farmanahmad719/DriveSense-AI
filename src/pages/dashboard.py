@@ -169,13 +169,12 @@ class Dashboard(ctk.CTk):
 
         elif page == "Reports":
 
-            if not hasattr(self, "reports_page"):
+            print("📄 REPORTS PAGE SELECTED")
 
-                self.reports_page = ReportsPage(
-                    self.page_container
-                )
-
-            self.current_page = self.reports_page
+            self.current_page = ReportsPage(
+                self.page_container,
+                self
+            )
 
         # ================= SETTINGS =================
 
