@@ -11,7 +11,7 @@ class DetectionCard(ctk.CTkFrame):
             parent,
             fg_color=CARD,
             corner_radius=18,
-            height=180
+            height=230
         )
 
         self.pack_propagate(False)
@@ -43,7 +43,9 @@ class DetectionCard(ctk.CTkFrame):
         self.head_label = self.create_detection_label(
             "Head"
         )
-
+        self.ml_label = self.create_detection_label(
+            "ML: UNKNOWN"
+        )
     # =======================================
 
     def create_detection_label(self, name):
@@ -129,3 +131,13 @@ class DetectionCard(ctk.CTkFrame):
             self.head_label.configure(
                 text="⚠️ Head"
             )       
+        ml_state = result.ml_state
+
+        confidence = result.ml_confidence * 100
+
+        self.ml_label.configure(
+            text=(
+                f"🤖 ML: {ml_state} "
+                f"({confidence:.0f}%)"
+            )
+        )    

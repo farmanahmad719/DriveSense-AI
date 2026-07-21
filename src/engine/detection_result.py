@@ -35,3 +35,7 @@ class DetectionResult:
     phone_confidence: float = 0.0
 
     phone_bbox: tuple = None
+    
+    ml_state: str = "UNKNOWN"
+
+    ml_confidence: float = 0.0

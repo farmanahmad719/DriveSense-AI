@@ -1,4 +1,6 @@
 import cv2
+from collections import deque
+from collections import Counter
 from src.camera.camera import CameraManager
 from src.detection.face_detector import FaceDetector
 from src.engine.detection_result import DetectionResult
@@ -10,6 +12,8 @@ from src.head_pose.head_pose_estimator import HeadPoseEstimator
 from src.distraction.distraction_detector import DistractionDetector
 from src.utils.screenshot_manager import ScreenshotManager
 from src.detection.phone_detector import PhoneDetector
+from src.ml.feature_collector import FeatureCollector
+from src.ml.driver_risk_model import DriverRiskModel
 from src.alerts.alarm import AlarmManager
 from src.utils.eye_utils import (
     LEFT_EYE,
@@ -38,6 +42,11 @@ class DetectionEngine:
         self.phone_detector = PhoneDetector()
         self.alarm = AlarmManager()
         self.screenshot_manager = ScreenshotManager()
+        self.feature_collector = FeatureCollector()
+        self.driver_risk_model = DriverRiskModel()
+        self.ml_prediction_history = deque(
+        maxlen=10
+    )
 
         self.previous_drowsy = False
         self.previous_distracted = False
@@ -251,6 +260,46 @@ class DetectionEngine:
         f"Direction={result.direction}, "
         f"Fatigue={result.fatigue_score}"
     )
+        print(
+            "FEATURES:",
+            "EAR =", round(result.ear, 3),
+            "MAR =", round(result.mar, 3),
+            "PITCH =", round(result.pitch, 2),
+            "YAW =", round(result.yaw, 2),
+            "ROLL =", round(result.roll, 2),
+            "BLINKS =", result.blink_count,
+            "YAWNS =", result.yawn_count
+        )
+        ml_state, ml_confidence = (
+            self.driver_risk_model.predict(
+                result
+            )
+        )
+
+        self.ml_prediction_history.append(
+            ml_state
+        )
+
+        state_counts = Counter(
+            self.ml_prediction_history
+        )
+
+        stable_state = state_counts.most_common(
+            1
+        )[0][0]
+
+        result.ml_state = stable_state
+
+        result.ml_confidence = ml_confidence
+        
+        print(
+            "🤖 ML:",
+            result.ml_state,
+            f"{result.ml_confidence:.2f}"
+        )
+        # self.feature_collector.collect(
+        #     result
+        # )
 
         return True, result
 
