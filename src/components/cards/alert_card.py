@@ -2,12 +2,11 @@ import customtkinter as ctk
 import os
 
 from theme import *
-from src.alerts.alert_system import AlertSystem
 
 
 class AlertCard(ctk.CTkFrame):
 
-    def __init__(self, parent):
+    def __init__(self, parent, alert_system):
 
         super().__init__(
             parent,
@@ -15,6 +14,7 @@ class AlertCard(ctk.CTkFrame):
             corner_radius=18,
             height=180
         )
+        self.alert_system = alert_system
 
         self.pack_propagate(False)
 
@@ -58,19 +58,17 @@ class AlertCard(ctk.CTkFrame):
 
         # ---------------- Alert System ----------------
 
-        self.alert_system = AlertSystem()
+        self.alert_system = alert_system
+        print(
+            "AlertCard AlertSystem:",
+            id(self.alert_system)
+        )
 
         # Prevent repeated alerts every frame
         self.previous_drowsy = False
         self.previous_distracted = False
         self.previous_yawn_count = 0
         self.previous_phone_detected = False
-
-        # Initial alert
-        self.alert_system.add_alert(
-            "INFO",
-            "Drive session started"
-        )
 
         self.refresh_alerts()
 

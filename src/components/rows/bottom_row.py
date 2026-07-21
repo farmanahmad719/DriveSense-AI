@@ -8,11 +8,16 @@ from src.components.cards.trip_card import TripCard
 
 class BottomRow(ctk.CTkFrame):
 
-    def __init__(self, parent):
+    def __init__(self, parent, alert_systems):
 
         super().__init__(
             parent,
             fg_color="transparent"
+        )
+        self.alert_system = alert_systems
+        print(
+            "BottomRow AlertSystem:",
+            id(self.alert_system)
         )
 
         for i in range(4):
@@ -21,11 +26,13 @@ class BottomRow(ctk.CTkFrame):
                 i,
                 weight=1
             )
-
+        
         # ---------------- Alert ----------------
 
-        self.alert_card = AlertCard(self)
-
+        self.alert_card = AlertCard(
+            self,
+            self.alert_system
+        )
         self.alert_card.grid(
             row=0,
             column=0,

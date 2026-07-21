@@ -5,6 +5,7 @@ from tkinter import filedialog
 from src.components.sidebar import Sidebar
 from src.components.navbar import Navbar
 from src.engine.detection_engine import DetectionEngine
+from src.alerts.alert_system import AlertSystem
 
 from src.pages.dashboard_page import DashboardPage
 from src.pages.live_monitoring import LiveMonitoringPage
@@ -33,6 +34,13 @@ class Dashboard(ctk.CTk):
         self.engine = DetectionEngine()
 
         self.engine.start(0)
+        # ================= ALERT SYSTEM =================
+
+        self.alert_system = AlertSystem()
+        print(
+            "Dashboard AlertSystem:",
+            id(self.alert_system)
+        )
 
         self.current_result = None
         self.session_history = []
@@ -127,10 +135,10 @@ class Dashboard(ctk.CTk):
             if not hasattr(self, "dashboard_page"):
 
                 self.dashboard_page = DashboardPage(
-                    self.page_container,
-                    self
-                )
-
+                self.page_container,
+                self,
+                self.alert_system
+            )
             self.current_page = self.dashboard_page
 
         # ================= LIVE MONITORING =================
@@ -162,9 +170,9 @@ class Dashboard(ctk.CTk):
             if not hasattr(self, "alerts_page"):
 
                 self.alerts_page = AlertsPage(
-                    self.page_container
-                )
-
+                self.page_container,
+                self.alert_system
+            )
             self.current_page = self.alerts_page
 
         # ================= REPORTS =================

@@ -6,12 +6,13 @@ from src.components.rows.bottom_row import BottomRow
 
 class DashboardPage(ctk.CTkFrame):
 
-    def __init__(self, parent, dashboard):
+    def __init__(self, parent, dashboard, alert_systems):
 
         super().__init__(
             parent,
             fg_color="transparent"
         )
+        self.alert_system = alert_systems
 
         self.dashboard = dashboard
 
@@ -46,7 +47,8 @@ class DashboardPage(ctk.CTkFrame):
         # ================= BOTTOM =================
 
         self.bottom = BottomRow(
-            self
+            self,
+            self.alert_system
         )
 
         self.bottom.grid(
