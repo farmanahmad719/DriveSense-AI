@@ -6,7 +6,7 @@ from src.components.sidebar import Sidebar
 from src.components.navbar import Navbar
 from src.engine.detection_engine import DetectionEngine
 from src.alerts.alert_system import AlertSystem
-
+from src.settings.settings_manager import SettingsManager
 from src.pages.dashboard_page import DashboardPage
 from src.pages.live_monitoring import LiveMonitoringPage
 from src.pages.analytics import AnalyticsPage
@@ -31,7 +31,11 @@ class Dashboard(ctk.CTk):
         self.configure(fg_color=BACKGROUND)
         # ================= BACKEND =================
 
-        self.engine = DetectionEngine()
+        self.settings_manager = SettingsManager()
+
+        self.engine = DetectionEngine(
+            settings_manager=self.settings_manager
+        )
 
         self.engine.start(0)
         # ================= ALERT SYSTEM =================
@@ -193,22 +197,28 @@ class Dashboard(ctk.CTk):
             if not hasattr(self, "settings_page"):
 
                 self.settings_page = SettingsPage(
-                    self.page_container
+                    self.page_container,
+                    self.settings_manager
                 )
 
             self.current_page = self.settings_page
 
         # ================= HELP =================
 
-        elif page == "Help":
+        elif page == "Settings":
 
-            if not hasattr(self, "help_page"):
+            print("⚙️ SETTINGS PAGE SELECTED")
 
-                self.help_page = HelpPage(
-                    self.page_container
+            if not hasattr(self, "settings_page"):
+
+                print("⚙️ CREATING SETTINGS PAGE")
+
+                self.settings_page = SettingsPage(
+                    self.page_container,
+                    self.settings_manager
                 )
 
-            self.current_page = self.help_page
+            self.current_page = self.settings_page
 
         # ================= SHOW PAGE =================
 
@@ -267,36 +277,7 @@ class Dashboard(ctk.CTk):
         self.after(
             30,
             self.update_detection
-        )
-    def select_recorded_video(self):
-
-        video_path = filedialog.askopenfilename(
-            title="Select Recorded Video",
-            filetypes=[
-                (
-                    "Video Files",
-                    "*.mp4 *.avi *.mov *.mkv"
-                ),
-                (
-                    "All Files",
-                    "*.*"
-                )
-            ]
-        )
-
-        if not video_path:
-
-            return
-
-        print(
-            f"🎥 Selected video:\n{video_path}"
-        )
-
-        # Start detection using selected video
-
-        self.engine.start(
-            video_path
-        )    
+        )  
     def select_recorded_video(self):
 
         video_path = filedialog.askopenfilename(
@@ -330,6 +311,10 @@ class Dashboard(ctk.CTk):
             "🎥 Switching to live camera"
         )
 
+        camera_id = self.settings_manager.get(
+            "camera_id"
+        )
+
         self.engine.start(
-            0
-        )    
+            camera_id
+        )

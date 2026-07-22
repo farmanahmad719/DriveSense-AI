@@ -29,7 +29,10 @@ from src.utils.eye_utils import (
 
 class DetectionEngine:
 
-    def __init__(self):
+    def __init__(
+        self,
+        settings_manager=None
+    ):
 
         self.camera = CameraManager()
         self.face_detector = FaceDetector()
@@ -40,7 +43,9 @@ class DetectionEngine:
         self.head_pose = HeadPoseEstimator()
         self.distraction_detector = DistractionDetector()
         self.phone_detector = PhoneDetector()
-        self.alarm = AlarmManager()
+        self.alarm = AlarmManager(
+        settings_manager=settings_manager
+    )
         self.screenshot_manager = ScreenshotManager()
         self.feature_collector = FeatureCollector()
         self.driver_risk_model = DriverRiskModel()
