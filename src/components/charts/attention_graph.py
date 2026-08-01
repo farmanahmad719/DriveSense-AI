@@ -3,6 +3,7 @@ from theme import *
 
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+import time
 
 
 class AttentionGraph(ctk.CTkFrame):
@@ -47,6 +48,7 @@ class AttentionGraph(ctk.CTkFrame):
         }
 
         self.current_metric = "Attention"
+        self.last_update_time = 0
 
         self.line, = self.ax.plot(
             self.x,
@@ -83,35 +85,181 @@ class AttentionGraph(ctk.CTkFrame):
             "Blink Rate": BLUE,
             "Drowsiness": ORANGE,
             "EAR": PURPLE
-        }        
+        }
 
-        self.line.set_ydata(self.datasets[metric])
-        self.line.set_color(colors[metric])
+        # Update X values
+        self.line.set_xdata(
+            self.x
+        )
+
+        # Update Y values
+        self.line.set_ydata(
+            self.datasets[metric]
+        )
+
+        self.line.set_color(
+            colors[metric]
+        )
 
         if metric == "EAR":
-            self.ax.set_ylim(0.15, 0.40)
-            self.ax.set_ylabel("EAR")
 
-        elif metric=="Attention":
-            self.ax.set_ylim(0,100)
-            self.ax.set_ylabel("Attention(%)")
+            self.ax.set_ylim(
+                0.15,
+                0.40
+            )
+
+            self.ax.set_ylabel(
+                "EAR"
+            )
+
+        elif metric == "Attention":
+
+            self.ax.set_ylim(
+                0,
+                100
+            )
+
+            self.ax.set_ylabel(
+                "Attention (%)"
+            )
 
         elif metric == "Blink Rate":
-             self.ax.set_ylim(0, 30)
-             self.ax.set_ylabel("Blinks/min")
+
+            self.ax.set_ylim(
+                0,
+                30
+            )
+
+            self.ax.set_ylabel(
+                "Blinks/min"
+            )
 
         else:
-            self.ax.set_ylim(0, 100)
-            self.ax.set_ylabel(metric)
 
-        self.ax.set_title(f"{metric} Trend")
-        self.ax.set_xlabel("Time (sec)")
+            self.ax.set_ylim(
+                0,
+                100
+            )
 
-        self.ax.title.set_color("white")
-        self.ax.yaxis.label.set_color("white")
-        self.ax.xaxis.label.set_color("white")
+            self.ax.set_ylabel(
+                metric
+            )
 
-        
+        self.ax.set_title(
+            f"{metric} Trend"
+        )
+
+        self.ax.set_xlabel(
+            "Time (sec)"
+        )
+
+        self.ax.title.set_color(
+            "white"
+        )
+
+        self.ax.yaxis.label.set_color(
+            "white"
+        )
+
+        self.ax.xaxis.label.set_color(
+            "white"
+        )
+
         self.canvas.draw_idle()
 
-        
+    def update_data(self, result):
+
+        current_time = time.time()
+
+        # Only store one graph point per second
+        if current_time - self.last_update_time < 1:
+
+            return
+
+        self.last_update_time = current_time
+
+        # ---------------- Attention ----------------
+
+        attention = max(
+            0,
+            min(
+                100,
+                100 - result.fatigue_score
+            )
+        )
+
+        # ---------------- Blink Rate ----------------
+
+        blink_rate = result.blink_count
+
+        # ---------------- Drowsiness ----------------
+
+        drowsiness = (
+            100
+            if result.is_drowsy
+            else 0
+        )
+
+        # ---------------- EAR ----------------
+
+        ear = result.ear
+
+        # ---------------- Add Data ----------------
+
+        self.datasets["Attention"].append(
+            attention
+        )
+
+        self.datasets["Blink Rate"].append(
+            blink_rate
+        )
+
+        self.datasets["Drowsiness"].append(
+            drowsiness
+        )
+
+        self.datasets["EAR"].append(
+            ear
+        )
+
+        # ---------------- Keep Last 10 Points ----------------
+
+        for metric in self.datasets:
+
+            self.datasets[metric] = (
+                self.datasets[metric][-10:]
+            )
+
+        # ---------------- Update X Axis ----------------
+
+        self.x = list(
+            range(
+                len(
+                    self.datasets["Attention"]
+                )
+            )
+        )
+
+        # ---------------- Update Current Graph ----------------
+
+        self.line.set_xdata(
+            self.x
+        )
+
+        self.line.set_ydata(
+            self.datasets[
+                self.current_metric
+            ]
+        )
+
+        # ---------------- Update X Limits ----------------
+
+        self.ax.set_xlim(
+            0,
+            max(
+                10,
+                len(self.x)
+            )
+        )
+
+        self.canvas.draw_idle()

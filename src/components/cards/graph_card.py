@@ -43,3 +43,8 @@ class GraphCard(ctk.CTkFrame):
             padx=(5, 15),
             pady=15
         )
+    def update_data(self, result):
+
+        self.graph.update_data(
+            result
+        )    

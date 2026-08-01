@@ -1,6 +1,9 @@
 import customtkinter as ctk
-from theme import *
+import cv2
 
+from PIL import Image, ImageTk
+
+from theme import *
 
 class CameraCard(ctk.CTkFrame):
 
@@ -186,3 +189,28 @@ class CameraCard(ctk.CTkFrame):
                 text="Disconnected",
                 text_color=RED
             )
+            
+    def update_frame(self, frame):
+
+        frame = cv2.cvtColor(
+            frame,
+            cv2.COLOR_BGR2RGB
+        )
+
+        image = Image.fromarray(frame)
+
+        image = image.resize(
+            (
+                self.camera_frame.winfo_width(),
+                self.camera_frame.winfo_height()
+            )
+        )
+
+        photo = ImageTk.PhotoImage(image)
+
+        self.camera_label.configure(
+            image=photo,
+            text=""
+        )
+
+        self.camera_label.image = photo        

@@ -1,0 +1,40 @@
+
+        ========================================
+                DRIVESENSE AI SESSION REPORT
+        ========================================
+
+        Generated:
+        2026-07-20 15:07:22
+
+        ----------------------------------------
+        SESSION SUMMARY
+        ----------------------------------------
+
+        Total Blinks:
+        2
+
+        Total Yawns:
+        0
+
+        Average Fatigue:
+        21.0%
+
+        Drowsiness Events:
+        2
+
+        Distraction Events:
+        0
+
+        Average EAR:
+        0.241
+
+        Average MAR:
+        0.238
+
+        Risk Level:
+        LOW
+
+        ========================================
+                END OF REPORT
+        ========================================
+        

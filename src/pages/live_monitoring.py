@@ -5,121 +5,123 @@ from theme import *
 from src.components.cards.camera_card import CameraCard
 from src.components.cards.driver_status_card import DriverStatusCard
 
+
 class LiveMonitoringPage(ctk.CTkFrame):
 
-    def __init__(self, parent):
+    def __init__(self, parent, dashboard):
 
         super().__init__(
             parent,
             fg_color="transparent"
         )
 
-        # Layout
-        self.grid_columnconfigure(0, weight=5)
-        self.grid_columnconfigure(1, weight=1)
+        self.dashboard = dashboard
 
-        self.grid_rowconfigure(0, weight=1)
+        # ==================================================
+        # LAYOUT
+        # ==================================================
 
-        # ================= CAMERA =================
-
-        self.camera = CameraCard(self, large=True)
-
-        self.camera.grid(
-            row=0,
-            column=0,
-            sticky="nsew",
-            padx=(0,15),
-            pady=10
+        self.grid_columnconfigure(
+            0,
+            weight=3
         )
 
-        # ================= RIGHT PANEL =================
+        self.grid_columnconfigure(
+            1,
+            weight=1
+        )
 
-        right = ctk.CTkFrame(
+        self.grid_rowconfigure(
+            0,
+            weight=0
+        )
+
+        self.grid_rowconfigure(
+            1,
+            weight=1
+        )
+
+        # ==================================================
+        # CONTROLS
+        # ==================================================
+
+        controls = ctk.CTkFrame(
             self,
             fg_color="transparent"
         )
 
-        right.grid(
-            row=0,
-            column=1,
-            sticky="nsew",
-            padx=(10,0),
-            pady=10
-        )
-        
-        right.grid_columnconfigure(0, weight=1)
-        right.grid_rowconfigure(0, weight=1)
-        right.grid_rowconfigure(1, weight=2)
-
-        # ================= DRIVER INFO =================
-
-        info = ctk.CTkFrame(
-            right,
-            fg_color=CARD,
-            corner_radius=18,
-            height=200
-        )
-
-        info.grid(
+        controls.grid(
             row=0,
             column=0,
-            sticky="nsew",
-            padx=0,
-            pady=(0,15)
+            columnspan=2,
+            sticky="ew",
+            pady=(0, 10)
         )
 
-        info.pack_propagate(False)
+        # ---------------- LIVE CAMERA ----------------
 
-        ctk.CTkLabel(
-            info,
-            text="👤 Driver Information",
-            font=("Segoe UI",16,"bold")
+        ctk.CTkButton(
+            controls,
+            text="🎥 Live Camera",
+            command=self.dashboard.start_live_camera
         ).pack(
-            anchor="w",
-            padx=20,
-            pady=(15,15)
+            side="left",
+            padx=(0, 10)
         )
 
-        details = [
-            ("Name", "Farman"),
-            ("Vehicle", "MH12AB1234"),
-            ("Driver ID", "DR001"),
-            ("Trip ID", "TRP001")
-        ]
+        # ---------------- RECORDED VIDEO ----------------
 
-        for title, value in details:
+        ctk.CTkButton(
+            controls,
+            text="📁 Select Recorded Video",
+            command=self.dashboard.select_recorded_video
+        ).pack(
+            side="left"
+        )
 
-            row = ctk.CTkFrame(
-                info,
-                fg_color="transparent"
-            )
+        # ==================================================
+        # CAMERA
+        # ==================================================
 
-            row.pack(
-                fill="x",
-                padx=20,
-                pady=5
-            )
+        self.camera = CameraCard(
+            self,
+            large=True
+        )
 
-            ctk.CTkLabel(
-                row,
-                text=title,
-                font=("Segoe UI",13)
-            ).pack(side="left")
-
-            ctk.CTkLabel(
-                row,
-                text=value,
-                font=("Segoe UI",13,"bold")
-            ).pack(side="right")
-
-        # ================= DRIVER STATUS =================
-
-        self.driver = DriverStatusCard(right)
-        
-        self.driver.grid(
+        self.camera.grid(
             row=1,
             column=0,
             sticky="nsew",
-            padx=0,
-            pady=(10, 0)
+            padx=(0, 15),
+            pady=10
+        )
+
+        # ==================================================
+        # DRIVER STATUS
+        # ==================================================
+
+        self.driver = DriverStatusCard(
+            self
+        )
+
+        self.driver.grid(
+            row=1,
+            column=1,
+            sticky="nsew",
+            padx=(10, 0),
+            pady=10
+        )
+
+    # ==================================================
+    # UPDATE DETECTION RESULT
+    # ==================================================
+
+    def update_detection_result(self, result):
+
+        self.camera.update_frame(
+            result.frame
+        )
+
+        self.driver.update_data(
+            result
         )

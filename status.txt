@@ -1,0 +1,33 @@
+On branch architecture-stabilization
+Changes not staged for commit:
+  (use "git add/rm <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	deleted:    alerts/.gitignore
+	deleted:    alerts/distraction_20260721_204546.png
+	deleted:    alerts/distraction_20260721_204745.png
+	deleted:    alerts/distraction_20260721_204751.png
+	deleted:    alerts/drowsiness_20260721_204542.png
+	deleted:    alerts/drowsiness_20260721_204746.png
+	deleted:    alerts/drowsiness_20260721_204752.png
+	deleted:    data/ml_features.csv
+	deleted:    phone_test_frame.jpg
+	deleted:    reports/session_report_20260720_150627.txt
+	deleted:    reports/session_report_20260720_150634.txt
+	deleted:    reports/session_report_20260720_150722.txt
+	deleted:    reports/session_report_20260720_150949.txt
+	deleted:    reports/session_report_20260720_151749.pdf
+	deleted:    reports/session_report_20260720_152548.pdf
+	deleted:    reports/session_report_20260720_152552.pdf
+	deleted:    reports/temp_charts/attention.png
+	deleted:    reports/temp_charts/ear.png
+	deleted:    reports/temp_charts/fatigue.png
+	deleted:    src/components/__init__.py
+	deleted:    src/detection/phone_detector.py
+	deleted:    src/engine/detection_engine.py
+	deleted:    src/engine/detection_result.py
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	status.txt
+
+no changes added to commit (use "git add" and/or "git commit -a")
