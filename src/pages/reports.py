@@ -206,12 +206,69 @@ class ReportsPage(ctk.CTkFrame):
 
     def update_report(self):
 
+        print("🔄 Refresh Report clicked")
+
         history = self.dashboard.session_history
 
         if not history:
 
-            return
+            print(
+                "⚠️ No session history available"
+            )
+            print(
+            "📊 History records:",
+            len(self.dashboard.session_history)
+        )
 
+            self.metric_labels[
+                "Total Blinks"
+            ].configure(
+                text="0"
+            )
+
+            self.metric_labels[
+                "Total Yawns"
+            ].configure(
+                text="0"
+            )
+
+            self.metric_labels[
+                "Average Fatigue"
+            ].configure(
+                text="0%"
+            )
+
+            self.metric_labels[
+                "Drowsiness Events"
+            ].configure(
+                text="0"
+            )
+
+            self.metric_labels[
+                "Distraction Events"
+            ].configure(
+                text="0"
+            )
+
+            self.metric_labels[
+                "Average EAR"
+            ].configure(
+                text="0.000"
+            )
+
+            self.metric_labels[
+                "Average MAR"
+            ].configure(
+                text="0.000"
+            )
+
+            self.metric_labels[
+                "Risk Level"
+            ].configure(
+                text="LOW"
+            )
+
+            return
         # ---------------- BLINKS ----------------
 
         total_blinks = (
@@ -351,6 +408,16 @@ class ReportsPage(ctk.CTkFrame):
             "Average MAR"
         ].configure(
             text=f"{average_mar:.3f}"
+        )
+        print(
+            "📊 REPORT VALUES:",
+            "Blinks =", total_blinks,
+            "Yawns =", total_yawns,
+            "Fatigue =", round(average_fatigue, 2),
+            "Drowsiness =", drowsiness_events,
+            "Distraction =", distraction_events,
+            "EAR =", round(average_ear, 3),
+            "MAR =", round(average_mar, 3)
         )
 
         # ---------------- RISK ----------------

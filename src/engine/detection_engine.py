@@ -77,7 +77,6 @@ class DetectionEngine:
         return self.camera.get_fps()
 
     def process_frame(self):
-        print("process_frame() called")
 
         ret, frame = self.camera.read_frame()
 
@@ -85,7 +84,6 @@ class DetectionEngine:
             return False, None
 
         result = DetectionResult(frame=frame)
-        print("📱 PHONE DETECTOR CALLED")
 
         phone_result = (
             self.phone_detector.detect(frame)
@@ -126,16 +124,6 @@ class DetectionEngine:
                 2
             )
 
-        print(
-            "ENGINE PHONE RESULT:",
-            result.phone_detected
-        )
-
-        print(
-            "PHONE CONFIDENCE:",
-            result.phone_confidence
-        )
-
         results = self.face_detector.detect_faces(frame)
 
         if not results.multi_face_landmarks:
@@ -158,14 +146,9 @@ class DetectionEngine:
 
         result.ear = ear
         result.mar = mar
-        print(f"EAR = {ear:.3f}   MAR = {mar:.3f}")
 
         # Blink Detection
         self.blink_detector.update(ear)
-        print(
-    "Blink Count:",
-    self.blink_detector.total_blinks
-)
         result.blink_count = self.blink_detector.total_blinks
 
         # Yawn Detection
@@ -197,12 +180,6 @@ class DetectionEngine:
                 result.pitch,
                 result.yaw,
             )
-            print(
-            f"Pitch={result.pitch:.1f}, "
-            f"Yaw={result.yaw:.1f}, "
-            f"Direction={result.direction}"
-        )
-
         else:
 
             result.pitch = 0.0
@@ -258,23 +235,6 @@ class DetectionEngine:
         )
 
         result.frame = frame
-        print(
-        f"Blink={result.blink_count}, "
-        f"Yawn={result.yawn_count}, "
-        f"Drowsy={result.is_drowsy}, "
-        f"Direction={result.direction}, "
-        f"Fatigue={result.fatigue_score}"
-    )
-        print(
-            "FEATURES:",
-            "EAR =", round(result.ear, 3),
-            "MAR =", round(result.mar, 3),
-            "PITCH =", round(result.pitch, 2),
-            "YAW =", round(result.yaw, 2),
-            "ROLL =", round(result.roll, 2),
-            "BLINKS =", result.blink_count,
-            "YAWNS =", result.yawn_count
-        )
         ml_state, ml_confidence = (
             self.driver_risk_model.predict(
                 result
@@ -297,11 +257,6 @@ class DetectionEngine:
 
         result.ml_confidence = ml_confidence
         
-        print(
-            "🤖 ML:",
-            result.ml_state,
-            f"{result.ml_confidence:.2f}"
-        )
         # self.feature_collector.collect(
         #     result
         # )

@@ -192,16 +192,21 @@ class Dashboard(ctk.CTk):
 
         # ================= SETTINGS =================
 
-        elif page == "Settings":
+        # ================= HELP =================
 
-            if not hasattr(self, "settings_page"):
+        elif page == "Help":
 
-                self.settings_page = SettingsPage(
-                    self.page_container,
-                    self.settings_manager
+            print("❓ HELP PAGE SELECTED")
+
+            if not hasattr(self, "help_page"):
+
+                print("❓ CREATING HELP PAGE")
+
+                self.help_page = HelpPage(
+                    self.page_container
                 )
 
-            self.current_page = self.settings_page
+            self.current_page = self.help_page
 
         # ================= HELP =================
 
